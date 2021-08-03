@@ -1,0 +1,247 @@
+.nav{
+	// background-color: #eee;
+	padding-top: 20px;
+	width: @nav-width-desktop;
+	min-width: @nav-width-desktop;
+	height: 100%;
+	min-height: 100vh;
+	display: block;
+	flex-grow: 10;
+	background-color: @nav-bg;
+	position: fixed;
+	transition: opacity 0.2s ease;
+	.site-logo{
+		padding: 0 24px;
+		img{
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+	.nav-item{
+		padding: 16px 24px;
+		display: block;
+		text-decoration: none;
+		color: @light-dm;
+		font-family: @poppins;
+		text-transform: uppercase;
+		font-weight: 600;
+		letter-spacing: 1px;
+		font-size: .667em;
+		position: relative;
+		&:hover{
+			text-decoration: underline;
+		}
+	}
+	@media (max-width: 991px){
+		opacity: 0;
+		pointer-events: none;
+		height: 100vh;
+		width: 100%;
+		left: 0;
+		top: 0;
+		z-index: 998;
+		padding-top: 92px;
+		&.active{
+			opacity: 1;
+			pointer-events: all;
+		}
+	}
+}
+
+.main-nav{
+	display: block;
+	height: 100%;
+	.primary-nav{
+		display: block;
+		position: relative;
+		cursor: pointer;
+		&.has-children{
+			// max-height: 50px;
+			// overflow: hidden;
+			transition: height 0.2s ease-out;
+
+			i{
+				position: absolute;
+				right: -40px;
+				top: 50%;
+				height: 24px;
+				width: 24px;
+				transform: translateY(-50%);
+				padding: 16px;
+				&:after{
+					content: '';
+					height: 24px;
+					width: 24px;
+					position: absolute;
+					top: 0;
+					right: 0;
+					transform: rotate(180deg);
+					background-image: url('/assets/icon/carat_up.png');
+				}
+			}
+			.nav-item{
+				// width: auto;
+				display: inline-block;
+			}
+			&.active{
+				max-height: 100%;
+				.nav-item i:after{
+					transform: rotate(0deg);
+				}
+			}
+		}
+	}
+	.sub-nav{
+		width: 100%;
+		display: block;
+		position: relative;
+		margin: 4px 0;
+		.sub-nav-item{
+			display: block;
+			margin: 0 16px;
+			text-decoration: none;
+			color: @secondary-dm;
+			font-family: @poppins;
+			font-weight: 500;
+			font-size: .777em;
+			padding: 14px 16px;
+			border-radius: 8px;
+			&:hover{
+				background-color: rgba(58, 70, 91, 0.5);
+				color: @white;
+			}
+		}
+		&.active{
+			&:before{
+				content: '';
+				display: block;
+				height: 16px;
+				width: 4px;
+				position: absolute;
+				left: 0;
+				background-color: @mint;
+				border-top-right-radius: 4px;
+				border-bottom-right-radius: 4px;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			.sub-nav-item{
+				background-color: rgba(58, 70, 91, 0.5);
+				color: @white;
+			}
+		}
+	}
+	@media (max-width: 991px){
+		.nav-item{
+			width: calc(100% - 64px);
+		}
+	}
+}
+
+.side-nav{
+	position: absolute;
+	bottom: 48px;
+	width: 100%;
+	left: 0;
+	.nav-item{
+		text-transform: none;
+		color: @white;
+		font-size: 0.9em;
+		letter-spacing: -0.5px;
+		font-weight: 500;
+	}
+	.nav-logo{
+		padding: 16px 24px 0;
+	}
+	.socials{
+		margin: 16px 24px;
+		display: flex;
+		justify-content: flex-start;
+		a{
+			margin-right: 16px;
+		}
+	}
+	.mini-nav{
+		padding: 0 24px;
+		p{
+			line-height: 1;
+			margin: 0;
+			a{
+				color: @light-dm;
+				font-size: 0.777em;
+				&:hover{
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}
+.top-nav-wrapper{
+	position: relative;
+	width: 100%;
+	// top: 0;
+	// right: 0;
+	@media (max-width: 991px){
+		position: fixed;
+		z-index: 999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		background-color: #1C212D;
+		box-shadow: rgba(0,0,0,0.3) 1px 1px 8px;
+	}
+}
+.top-nav{
+	display: block;
+	// background-color: #eee;
+	// height: 88px;
+	padding: 18px 0;
+	width: 100%;
+	// position: absolute;
+	top: 0;
+	right: 0;
+	@media (max-width: 991px){
+	}
+	.site-logo{
+		max-width: 168px;
+		position: absolute;
+		top: 18px;
+		height: 72px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+	.account-btns{
+		display: flex;
+		justify-content: flex-end;
+
+	}
+}
+
+.mobile-menu-btn{
+	cursor: pointer;
+	// display: none;
+	display: block;
+	span{
+		background-color: @white;
+	  height: 4px;
+	  width: 30px;
+	  border-radius: 2px;
+	  display: block;
+	  margin: 6px 0;
+	  transition: all 0.4s ease;
+	}
+	&.open{
+		span{
+			&:nth-child(1){
+				transform: translate(0, 10px) rotate(-50deg)
+			}
+			&:nth-child(2){
+				opacity: 0;
+			}
+			&:nth-child(3){
+				transform: translate(0, -10px) rotate(50deg);
+			}
+		}
+
+	}
+}
