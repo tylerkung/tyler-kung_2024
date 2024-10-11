@@ -1,36 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;0,900;1,400;1,500;1,700&family=Inter:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 @poppins: "Poppins", Helvetica, Arial, sans-serif;
 @inter: "Inter", Helvetica, Arial, sans-serif;
+@tomorrow: "Tomorrow", Helvetica, Arial, sans-serif;
+@ps: "Press Start 2P", Helvetica, Arial, sans-serif;
+// @inter: "Inter", Helvetica, Arial, sans-serif;
 
+@font-face {
+  font-family: "Tomorrow";
+  src: url("/assets/fonts/Tomorrow-Thin.ttf") format("truetype");
+	font-weight: 100;
+}
+
+@font-face {
+  font-family: "Tomorrow";
+  src: url("/assets/fonts/Tomorrow-ExtraLight.ttf") format("truetype");
+	font-weight: 200;
+}
+@font-face {
+  font-family: "Tomorrow";
+  src: url("/assets/fonts/Tomorrow-Light.ttf") format("truetype");
+	font-weight: 300;
+}
+@font-face {
+  font-family: "Tomorrow";
+  src: url("/assets/fonts/Tomorrow-Regular.ttf") format("truetype");
+	font-weight: 400;
+}
+@font-face {
+  font-family: "Tomorrow";
+  src: url("/assets/fonts/Tomorrow-Medium.ttf") format("truetype");
+	font-weight: 500;
+}
+@font-face {
+  font-family: "Tomorrow";
+  src: url("/assets/fonts/Tomorrow-SemiBold.ttf") format("truetype");
+	font-weight: 600;
+}
 
 body{
-	font-family: @poppins;
-	color: @white;
-	font-size: 14px;
+	font-family: @tomorrow;
+	color: @primary;
+	font-weight: 200;
+	font-size: 24px;
 	-webkit-font-smoothing: antialiased;
 }
 
 p{
-	font-family: @inter;
-	color: @secondary-dm;
-	line-height: 1.777;
-	font-weight: 400;
-	font-size: 1.125em;
+	font-family: @tomorrow;
+	color: @primary;
+	line-height: 1.5;
+	font-weight: 300;
+	font-size: 0.8em;
+  margin-top: 0;
 }
 
 a{
 	text-decoration: none;
-	color: @mint;
+  font-weight: 500;
+	color: @highlight;
 	&:hover:not(.btn){
 		color: white;
 	}
 }
 
 h1{
-	font-family: @poppins;
+	font-family: @tomorrow;
 	font-weight: 600;
-	font-size: 3.111em;
+	font-size: 2em;
 	letter-spacing: -1px;
 	margin-bottom: 1.2em;
 	line-height: 1.14;
@@ -39,21 +77,23 @@ h1{
 	}
 }
 h2{
-	font-family: @poppins;
+	font-family: @tomorrow;
 	font-weight: 600;
 	letter-spacing: -1px;
-	font-size: 2.667em;
+	font-size: 1.8em;
 	line-height: 1.5;
+  margin-bottom: 0px;
 	@media (min-width: 992px) and (max-width: 1200px){
 		font-size: 2.222em;
 	}
 }
 h3{
-	font-family: @poppins;
-	font-weight: 600;
-	font-size: 2.222em;
+	font-family: @tomorrow;
+	font-weight: 500;
+	font-size: 1.1em;
 	letter-spacing: -1px;
 	line-height: 1.5;
+  margin-top: 0px;
 	margin-bottom: 8px;
 	@media (min-width: 992px) and (max-width: 1200px){
 		font-size: 1.778em;
@@ -62,7 +102,7 @@ h3{
 h4{
 	font-family: @poppins;
 	font-weight: 500;
-	font-size: 1.778em;
+	font-size: 1em;
 	letter-spacing: -0.5px;
 	line-height: 1.5;
 	@media (min-width: 992px) and (max-width: 1200px){
@@ -92,14 +132,19 @@ h6{
 	}
 }
 
+.txt-highlight{
+  color: @highlight !important;
+}
+
 .txt-center{
 	text-align: center;
 }
+.txt-right{
+  text-align: right;
+}
+
 .mobile-center{
 	@media (max-width: 991px){
 		text-align: center;
 	}
-}
-.txt-secondary{
-	color: @secondary-dm !important;
 }

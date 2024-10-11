@@ -2,32 +2,18 @@
 	display: block;
 	margin: 0 auto 0;
 	padding: 0 24px;
-	max-width: 1000px; //adjust for screen size
-	max-width: 1200px !important;
+	max-width: 1400px;
 	@media (min-width: 968px){
 		padding: 0 32px;
-		max-width: 800px;
-		// padding: 120px 15px;
 	}
 	@media (min-width: 1200px){
-		max-width: 980px;
-	}
-	@media (min-width: 1400px){
-		// &:not(.mini-container){
-			max-width: 1064px;
-		// }
-	}
-	@media (min-width: 1600px){
-		&:not(.mini-container){
-				max-width: 1200px;
-		}
+		max-width: 1400px;
 	}
 }
 .row{
 	display: flex;
 	flex-wrap: wrap;
-	margin-left: -8px;
-	margin-right: -8px;
+	margin-bottom: 24px;
 	&.row-flex{
 		flex-wrap: nowrap;
 	}
@@ -38,6 +24,12 @@
 	}
 	&.flex-center{
 		align-items: center;
+	}
+	&.flex-full{
+		align-items: stretch;
+	}
+	&.flex-stretch{
+		justify-content: space-between;
 	}
 }
 .fluid-container{
@@ -58,7 +50,7 @@
 	width: 100%;
   position: relative;
 	width: 100%;
-	padding: 0 8px;
+	padding: 0 40px;
 }
 .col-1{
 	flex: 0 0 8.333%;
