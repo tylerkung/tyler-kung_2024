@@ -430,6 +430,7 @@ img {
   border-radius: 8px;
   background-color: rgba(33, 33, 33, 0.4);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   outline: 2px solid #BFEAFC;
   height: 100%;
   width: 100%;
@@ -594,7 +595,8 @@ img {
   color: #212121;
   font-weight: 500;
   font-size: 1.1em;
-  border-bottom-right-radius: 16px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 8px;
 }
 @media (max-width: 991px) {
   .tag {
