@@ -25,7 +25,7 @@ body{
     width: 100%;
     content: '';
     background-image: url(/assets/img/noise.gif);
-    opacity: .03;
+    opacity: .06;
     z-index: 9999;
     pointer-events: none;
 	}
@@ -39,7 +39,7 @@ body{
 	width: 100%;
 	padding-top: 64px;
 	@media (max-width: 991px){
-		padding-top: 104px;
+		padding-top: 32px;
 	}
 }
 img{
@@ -59,7 +59,7 @@ img{
 .box{
 	border-radius: 8px;
 	background-color: rgba(33,33,33,0.4);
-	backdrop-filter: blur(2px);
+	backdrop-filter: blur(4px);
 	outline: 2px solid @primary;
 	height: 100%;
 	width: 100%;
@@ -70,6 +70,9 @@ img{
 	display: flex;
 	align-items: stretch;
 	height: 100px;
+	@media (max-width: 991px){
+		margin-bottom: 0px;
+	}
 	.marquee-wrapper{
 		margin-left: 16px;
 	}
@@ -89,9 +92,19 @@ img{
 		padding-top: 100%;
 		width: 100%;
 		position: relative;
+		transition: all 0.2s ease;
+		svg path{
+			transition: all 0.2s ease;
+		}
+		&:hover{
+			outline: 2px solid @highlight;
+			svg path{
+				fill: @highlight;
+			}
+		}
 		.logo{
 			position: absolute;
-			width: 120%;
+			width: 100%;
 		  top: 50%;
 		  left: 50%;
 		  transform: translateX(-50%) translateY(-50%);
@@ -123,7 +136,7 @@ img{
 }
 .marquee{
 	display: flex;
-	animation: marquee 20s linear infinite;
+	animation: marquee 40s linear infinite;
 	white-space: nowrap;
 	.item{
 		display: inline-block;
@@ -177,7 +190,7 @@ img{
 }
 .v-marquee{
 	display: flex;
-	animation: v-marquee 32s linear infinite;
+	animation: v-marquee 48s linear infinite;
 	white-space: nowrap;
 	flex-direction: column;
 	.item{
@@ -202,6 +215,9 @@ img{
 .full-name{
 	width: 100%;
 	margin: 16px 0 48px;
+	@media (max-width: 991px){
+		margin: 0 0 16px;
+	}
 }
 
 .tag{
@@ -212,18 +228,29 @@ img{
 	padding: 8px 48px;
 	color: @dark;
 	font-weight: 500;
-	font-size: 1.25em;
+	font-size: 1.1em;
 	border-bottom-right-radius: 16px;
+	@media (max-width: 991px){
+		font-size: 0.8em;
+	}
 }
 
 .work-section{
 	position: relative;
 	.box{
 		position: relative;
+		padding-top: 40px;
+		@media (max-width: 991px){
+			padding-top: 64px;
+		}
 	}
 	.item-thumb{
 		width: 320px;
 		height: 240px;
+		@media (max-width: 991px){
+			width: 240px;
+			height: 160px;
+		}
 		img{
 			width: 100%;
 
@@ -283,18 +310,51 @@ img{
 	.about-content{
 		padding-top: 80px;
 		padding-bottom: 80px;
+		@media (max-width: 991px){
+			padding-top: 64px;
+			padding-bottom: 64px;
+		}
 	}
 	.about-hero{
 		height: 100%;
+		padding-left: 16px;
 	}
 }
 
 .contact-section{
+	.signature{
+		text-align: center;
+		margin-top: 16px;
+		@media (min-width: 992px){
+			text-align: right;
+		}
+	}
 	.box{
 		padding-top: 80px;
 		padding-bottom: 16px;
+		@media (max-width: 991px){
+			padding-top: 48px;
+			padding-bottom: 0;
+		}
 	}
-	a + a{
-		margin-left: 40px;
+	.icons a:hover{
+		opacity: 0.7;
+	}
+	.icons a + a{
+		margin-left: 24px;
+	}
+	.contact-container{
+		display: flex;
+		align-items: center;
+		> *{
+			margin-top: 8px;
+			@media (min-width: 992px){
+				margin-top: 0;
+				margin-left: 40px;
+			}
+		}
+		@media (max-width: 991px){
+			flex-direction: column;
+		}
 	}
 }
