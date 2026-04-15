@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booki Organizer Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #1a1a2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'IBM Plex Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+:root {
+  --bg: #0A0A12; --card-bg: #14141F; --elevated-bg: #1E1E2D;
+  --accent: #00F5D4; --accent-secondary: #9D4EDD; --accent-tertiary: #FF006E; --gold: #FFE66D;
+  --danger: #FF6B6B; --warning: #FFA94D; --scheduled: #7B68EE;
+  --text-primary: #F8F8F8; --text-secondary: #A8A8B8; --text-muted: #6B6B7B;
+  --border: #2A2A3A; --divider: #22222E;
+  --font-display: 'Space Grotesk', sans-serif; --font-body: 'IBM Plex Sans', sans-serif;
+  --xs: 4px; --sm: 8px; --md: 12px; --lg: 16px; --xl: 24px; --xxl: 32px;
+}
+
+/* Phone Frame */
+.phone-frame {
+  width: 393px; height: 852px; background: var(--bg); border-radius: 54px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 2px #333, 0 0 0 6px #1a1a1a, 0 0 0 8px #333, 0 50px 100px rgba(0,0,0,0.5);
+}
+.phone-screen { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.status-bar { height: 54px; padding: 14px 32px 0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: var(--card-bg); }
+.status-bar .time { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--text-primary); }
+.status-bar .icons { display: flex; gap: 5px; align-items: center; }
+.status-bar .icons svg { fill: var(--text-primary); }
+.dynamic-island { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 126px; height: 36px; background: #000; border-radius: 20px; z-index: 100; }
+.home-indicator { height: 34px; display: flex; align-items: end; justify-content: center; padding-bottom: 8px; flex-shrink: 0; background: var(--bg); }
+.home-indicator-bar { width: 134px; height: 5px; background: var(--text-secondary); border-radius: 3px; opacity: 0.4; }
+
+/* Tab Header */
+.tab-header {
+  display: flex; align-items: center; justify-content: center; padding: 10px var(--lg) var(--md);
+  background: var(--card-bg); border-bottom: 0.5px solid var(--divider); flex-shrink: 0; position: relative;
+}
+.tab-header .logo { position: absolute; left: var(--lg); }
+.tab-header .logo img { height: 20px; width: auto; }
+.tab-header .title { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--text-primary); }
+
+/* Tab Bar */
+.tab-bar { display: flex; padding: 6px 0 0; background: var(--bg); border-top: 0.5px solid var(--divider); flex-shrink: 0; }
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; cursor: pointer; border: none; background: none; outline: none; }
+.tab-item svg { width: 22px; height: 22px; }
+.tab-item.active svg { fill: var(--accent); }
+.tab-item:not(.active) svg { fill: var(--text-secondary); }
+.tab-item .tab-label { font-family: var(--font-display); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.tab-item.active .tab-label { color: var(--accent); }
+.tab-item:not(.active) .tab-label { color: var(--text-secondary); }
+.tab-badge { background: var(--accent); color: var(--bg); font-family: var(--font-display); font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 999px; position: absolute; top: -4px; right: -8px; }
+
+/* Shared scrollable view */
+.tab-view { flex: 1; display: none; flex-direction: column; min-height: 0; }
+.tab-view.active { display: flex; }
+.tab-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; background: var(--bg); padding: var(--lg); }
+.tab-scroll::-webkit-scrollbar { display: none; }
+
+/* Cards */
+.card { background: linear-gradient(to bottom, var(--card-bg), #0E0E18); border-radius: 16px; border: 1px solid var(--border); margin-bottom: var(--lg); overflow: hidden; }
+.card-padded { padding: var(--lg); }
+.card-section-label { font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: var(--sm); }
+
+/* Divider */
+.divider { height: 1px; background: var(--divider); }
+
+/* Pill badges */
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font-family: var(--font-display); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.pill-accent { background: rgba(0,245,212,0.15); color: var(--accent); }
+.pill-danger { background: rgba(255,107,107,0.15); color: var(--danger); }
+.pill-warning { background: rgba(255,169,77,0.15); color: var(--warning); }
+.pill-muted { background: rgba(107,107,123,0.15); color: var(--text-muted); }
+.pill-scheduled { background: rgba(123,104,238,0.15); color: var(--scheduled); }
+.pill-solid-accent { background: var(--accent); color: var(--bg); }
+.pill-solid-danger { background: var(--danger); color: #fff; }
+.pill-solid-warning { background: var(--warning); color: #fff; }
+
+/* Status pill (bigger) */
+.status-pill { padding: 4px 10px; border-radius: 999px; font-family: var(--font-display); font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+
+/* Progress bar */
+.progress-bar { height: 6px; background: var(--elevated-bg); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+
+/* ========================================
+   DASHBOARD
+   ======================================== */
+.pnl-section { text-align: center; padding: var(--xl) var(--lg) var(--lg); }
+.pnl-amount { font-family: var(--font-display); font-size: 34px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.pnl-sub { font-family: var(--font-body); font-size: 12px; color: var(--accent); margin-bottom: var(--md); }
+
+.time-selector { display: flex; padding: 2px; background: var(--card-bg); border-radius: 8px; margin: 0 auto; max-width: 240px; }
+.time-btn { flex: 1; padding: 6px 0; border: none; background: none; font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; outline: none; transition: all 0.15s ease; }
+.time-btn.active { background: var(--elevated-bg); color: var(--text-primary); }
+
+/* Settlement card */
+.settlement-header { display: flex; align-items: center; gap: 10px; margin-bottom: var(--lg); }
+.settlement-header .icon-wrap { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.settlement-header .sh-text { flex: 1; }
+.settlement-header .sh-title { font-family: var(--font-body); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.settlement-header .sh-sub { font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); }
+.settlement-amounts { display: flex; gap: var(--lg); margin-bottom: var(--lg); }
+.settlement-amounts .sa-col { flex: 1; }
+.settlement-amounts .sa-label { display: flex; align-items: center; gap: 4px; font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.settlement-amounts .sa-value { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+
+.settlement-stats { display: flex; gap: var(--lg); }
+.settlement-stats .ss-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+/* Unpaid player rows */
+.unpaid-row { display: flex; align-items: center; padding: var(--sm) var(--md); background: rgba(30,30,45,0.5); border-radius: 12px; margin-bottom: var(--sm); }
+.unpaid-row .ur-name { flex: 1; font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.unpaid-row .ur-amount { font-family: var(--font-display); font-size: 13px; font-weight: 700; margin-right: var(--md); }
+.unpaid-row .ur-btn { padding: 6px 12px; border: none; border-radius: 8px; font-family: var(--font-display); font-size: 12px; font-weight: 700; cursor: pointer; outline: none; background: var(--accent); color: var(--bg); }
+
+/* Risk watchlist */
+.risk-row { padding: var(--sm) 0; }
+.risk-row:not(:last-child) { border-bottom: 1px solid var(--divider); }
+.risk-row .rr-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+.risk-row .rr-name { font-family: var(--font-body); font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.risk-row .rr-bar { margin-top: 4px; }
+.risk-row .rr-bar-label { font-family: var(--font-body); font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* Tonight's exposure */
+.exposure-header { display: flex; align-items: center; gap: 10px; margin-bottom: var(--lg); }
+.exposure-header .icon-wrap { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary)); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.exposure-header .eh-text { flex: 1; }
+.exposure-header .eh-title { font-family: var(--font-body); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.exposure-header .eh-sub { font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); }
+.exposure-loss { margin-bottom: var(--md); }
+.exposure-loss .el-label { display: flex; align-items: center; gap: 4px; font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.exposure-loss .el-value { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--danger); }
+.exposure-game { display: flex; align-items: center; gap: 6px; padding: var(--sm) 0; }
+.exposure-game .eg-icon { font-size: 16px; }
+.exposure-game .eg-text { flex: 1; }
+.exposure-game .eg-name { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.exposure-game .eg-sub { font-family: var(--font-body); font-size: 12px; color: var(--warning); }
+.exposure-game .eg-time { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); }
+
+.card-action { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 10px 14px; background: rgba(0,245,212,0.1); border-radius: 12px; font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--accent); cursor: pointer; border: none; outline: none; width: 100%; margin-top: var(--md); }
+
+/* ========================================
+   PICKS TAB
+   ======================================== */
+.picks-filters { padding: 0 0 var(--md); flex-shrink: 0; }
+.picks-seg { display: flex; margin-bottom: var(--sm); background: var(--elevated-bg); border-radius: 8px; overflow: hidden; }
+.picks-seg-btn { flex: 1; padding: 8px; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer; outline: none; background: none; color: var(--text-secondary); transition: all 0.15s ease; }
+.picks-seg-btn.active { background: var(--accent); color: var(--bg); }
+.picks-chips { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.picks-chips::-webkit-scrollbar { display: none; }
+.pick-chip { padding: 6px 12px; border: 0.5px solid var(--border); border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-secondary); background: var(--card-bg); cursor: pointer; white-space: nowrap; outline: none; flex-shrink: 0; }
+.pick-chip.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+.pick-card { background: var(--card-bg); border-radius: 16px; border: 0.5px solid var(--border); padding: var(--md); margin-bottom: var(--md); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+.pick-card-head { display: flex; align-items: flex-start; gap: var(--sm); margin-bottom: 4px; }
+.pick-card-title { flex: 1; font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+.pick-card-player { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.pick-card-context { font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); }
+.pick-card-ctx { margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pick-card-foot { display: flex; align-items: center; gap: 8px; }
+.pick-card-foot .stake { font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); }
+.pick-card-foot .profit { font-family: var(--font-body); font-size: 13px; font-weight: 500; }
+.pick-card-foot .score { margin-left: auto; font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.leg-dots { display: flex; gap: 4px; margin-left: auto; }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ========================================
+   MEMBERS TAB
+   ======================================== */
+.members-search { padding: 0 0 var(--md); }
+.members-search input { width: 100%; padding: 10px 10px 10px 36px; background: var(--elevated-bg); border: none; border-radius: 12px; font-family: var(--font-body); font-size: 15px; color: var(--text-primary); outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%236B6B7B'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 12px center; }
+.members-search input::placeholder { color: var(--text-muted); }
+.members-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: var(--lg); }
+.members-chips::-webkit-scrollbar { display: none; }
+.member-chip { padding: 6px 12px; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-secondary); background: var(--elevated-bg); cursor: pointer; white-space: nowrap; outline: none; border: none; flex-shrink: 0; }
+.member-chip.active { background: var(--accent); color: var(--bg); }
+
+.member-card { padding: var(--lg); margin-bottom: var(--md); }
+.member-card .mc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+.member-card .mc-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.member-card .mc-balance { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+.member-card .mc-credit { font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.member-card .mc-metrics { display: flex; gap: 0; margin-bottom: 8px; }
+.member-card .mc-metric { flex: 1; text-align: center; }
+.member-card .mc-metric .mm-label { font-family: var(--font-body); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+.member-card .mc-metric .mm-value { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.member-card .mc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.invite-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-family: var(--font-display); font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--bg); background: linear-gradient(to bottom, var(--accent), rgba(0,245,212,0.85)); box-shadow: 0 4px 12px rgba(0,245,212,0.4); cursor: pointer; outline: none; margin-top: var(--sm); }
+
+/* ========================================
+   EVENTS TAB
+   ======================================== */
+.sport-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: var(--sm); }
+.sport-card .sc-icon { width: 28px; text-align: center; font-size: 20px; color: var(--accent); flex-shrink: 0; }
+.sport-card .sc-name { flex: 1; font-family: var(--font-body); font-size: 17px; font-weight: 500; color: var(--text-primary); }
+.sport-card .sc-count { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); margin-right: 4px; }
+.sport-card .sc-chevron { color: var(--text-muted); font-size: 14px; }
+
+/* ========================================
+   SETTINGS TAB
+   ======================================== */
+.settings-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
+.settings-row:not(:last-child) { border-bottom: 0.5px solid var(--border); }
+.settings-row .sr-icon { width: 28px; text-align: center; flex-shrink: 0; }
+.settings-row .sr-icon svg { width: 20px; height: 20px; }
+.settings-row .sr-text { flex: 1; }
+.settings-row .sr-title { font-family: var(--font-body); font-size: 17px; font-weight: 500; color: var(--text-primary); }
+.settings-row .sr-sub { font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.settings-row .sr-trailing { font-family: var(--font-body); font-size: 17px; color: var(--accent); font-weight: 500; }
+.settings-row .sr-chevron { color: var(--text-muted); font-size: 14px; }
+.settings-row.danger .sr-title { color: var(--danger); }
+
+/* Alert banner */
+.alert-banner { display: flex; align-items: center; gap: var(--md); padding: var(--md) var(--lg); background: linear-gradient(to right, rgba(255,107,107,0.15), rgba(255,0,110,0.08)); border: 1px solid rgba(255,107,107,0.4); border-radius: 16px; margin-bottom: var(--lg); cursor: pointer; }
+.alert-banner .ab-icon { width: 48px; height: 48px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,107,0.4), transparent); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.alert-banner .ab-text { flex: 1; }
+.alert-banner .ab-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.alert-banner .ab-sub { font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); }
+.alert-banner .ab-chevron { color: rgba(255,107,107,0.6); font-size: 22px; }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="dynamic-island"></div>
+  <div class="phone-screen">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1" opacity="0.3"/></svg>
+        <svg width="15" height="12" viewBox="0 0 15 12"><path d="M7.5 2.5C9.8 2.5 11.8 3.4 13.3 4.9L14.5 3.7C12.6 1.8 10.2 0.5 7.5 0.5C4.8 0.5 2.4 1.8 0.5 3.7L1.7 4.9C3.2 3.4 5.2 2.5 7.5 2.5ZM7.5 6.5C8.9 6.5 10.2 7 11.2 7.9L12.4 6.7C11 5.4 9.3 4.5 7.5 4.5C5.7 4.5 4 5.4 2.6 6.7L3.8 7.9C4.8 7 6.1 6.5 7.5 6.5ZM7.5 10.5C8.2 10.5 8.8 10.2 9.2 9.8L7.5 8L5.8 9.8C6.2 10.2 6.8 10.5 7.5 10.5Z"/></svg>
+        <svg width="27" height="12" viewBox="0 0 27 12"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1"/><rect x="23" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="17" height="7" rx="1" fill="var(--accent)"/></svg>
+      </div>
+    </div>
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <div class="tab-view active" id="dashboardView">
+      <div class="tab-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="title">Dashboard</span>
+      </div>
+      <div class="tab-scroll">
+        <!-- PnL -->
+        <div class="pnl-section">
+          <div class="pnl-amount">+$2,847.50</div>
+          <div class="pnl-sub">+$2,847.50 all time</div>
+          <div class="time-selector">
+            <button class="time-btn" onclick="setTime(this)">1D</button>
+            <button class="time-btn" onclick="setTime(this)">1W</button>
+            <button class="time-btn" onclick="setTime(this)">1M</button>
+            <button class="time-btn active" onclick="setTime(this)">All</button>
+          </div>
+        </div>
+
+        <!-- Alert banner -->
+        <div class="alert-banner">
+          <div class="ab-icon">&#9888;&#65039;</div>
+          <div class="ab-text">
+            <div class="ab-title">2 members need attention</div>
+            <div class="ab-sub">Tap to view flagged members</div>
+          </div>
+          <span class="ab-chevron">&#8250;</span>
+        </div>
+
+        <!-- Settlement -->
+        <div class="card-section-label">Settlement</div>
+        <div class="card card-padded">
+          <div class="settlement-header">
+            <div class="icon-wrap">&#128197;</div>
+            <div class="sh-text">
+              <div class="sh-title">Settlement</div>
+              <div class="sh-sub">Apr 7 - Apr 13, 2026</div>
+            </div>
+            <span class="pill pill-solid-danger" style="font-size:11px;">1 overdue</span>
+          </div>
+          <div class="settlement-amounts">
+            <div class="sa-col">
+              <div class="sa-label">&#9650; Owed to You</div>
+              <div class="sa-value" style="color:var(--accent);">$1,245</div>
+            </div>
+            <div class="sa-col">
+              <div class="sa-label">&#9660; You Owe</div>
+              <div class="sa-value" style="color:var(--danger);">$397</div>
+            </div>
+          </div>
+          <div class="settlement-stats">
+            <div class="ss-item" style="color:var(--warning);">&#9679; 3 unpaid</div>
+            <div class="ss-item" style="color:var(--danger);">&#9679; 1 overdue</div>
+          </div>
+          <div class="divider" style="margin:var(--md) 0;"></div>
+          <div class="unpaid-row">
+            <span class="ur-name">Marcus T.</span>
+            <span class="ur-amount" style="color:var(--danger);">$420.00</span>
+            <button class="ur-btn">Mark Paid</button>
+          </div>
+          <div class="unpaid-row">
+            <span class="ur-name">Jake R.</span>
+            <span class="ur-amount" style="color:var(--danger);">$185.00</span>
+            <button class="ur-btn">Mark Paid</button>
+          </div>
+          <div class="unpaid-row">
+            <span class="ur-name">Sarah K.</span>
+            <span class="ur-amount" style="color:var(--accent);">$397.00</span>
+            <button class="ur-btn" style="background:var(--elevated-bg);color:var(--text-primary);">Settle</button>
+          </div>
+          <button class="card-action">View Settlements &#8250;</button>
+        </div>
+
+        <!-- Member Risk -->
+        <div class="card-section-label">Member Risk</div>
+        <div class="card card-padded">
+          <div class="risk-row">
+            <div class="rr-top">
+              <span class="rr-name">Marcus T.</span>
+              <span class="pill pill-solid-warning">Overdue</span>
+              <span class="pill pill-solid-danger">Near Limit</span>
+            </div>
+            <div class="rr-bar">
+              <div class="progress-bar"><div class="progress-fill" style="width:92%;background:var(--danger);"></div></div>
+              <div class="rr-bar-label">92% of credit used</div>
+            </div>
+          </div>
+          <div class="risk-row">
+            <div class="rr-top">
+              <span class="rr-name">Jake R.</span>
+              <span class="pill pill-solid-accent" style="background:var(--accent);color:var(--bg);">Hot Streak</span>
+            </div>
+            <div class="rr-bar">
+              <div class="progress-bar"><div class="progress-fill" style="width:68%;background:var(--accent);"></div></div>
+              <div class="rr-bar-label">68% of credit used</div>
+            </div>
+          </div>
+          <div class="risk-row" style="border:none;">
+            <div class="rr-top">
+              <span class="rr-name">Chris M.</span>
+              <span class="pill pill-solid-danger">Losing Big</span>
+            </div>
+            <div class="rr-bar">
+              <div class="progress-bar"><div class="progress-fill" style="width:45%;background:var(--accent);"></div></div>
+              <div class="rr-bar-label">45% of credit used</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tonight's Exposure -->
+        <div class="card-section-label">Tonight's Activity</div>
+        <div class="card card-padded">
+          <div class="exposure-header">
+            <div class="icon-wrap">&#127769;</div>
+            <div class="eh-text">
+              <div class="eh-title">Tonight's Open Activity</div>
+              <div class="eh-sub">3 games tonight</div>
+            </div>
+            <span class="pill pill-solid-danger" style="font-size:11px;">1 high risk</span>
+          </div>
+          <div class="exposure-loss">
+            <div class="el-label">&#9888; Total Potential Loss</div>
+            <div class="el-value">$1,840</div>
+          </div>
+          <div class="exposure-game">
+            <span class="eg-icon" style="color:var(--warning);">&#128293;</span>
+            <div class="eg-text">
+              <div class="eg-name">Celtics @ Knicks</div>
+              <div class="eg-sub">Highest activity: $620</div>
+            </div>
+            <span class="eg-time">7:00 PM</span>
+          </div>
+          <div class="exposure-game">
+            <span class="eg-icon" style="color:var(--text-muted);">&#127936;</span>
+            <div class="eg-text">
+              <div class="eg-name">Lakers @ 76ers</div>
+              <div class="eg-sub">Activity: $480</div>
+            </div>
+            <span class="eg-time">7:30 PM</span>
+          </div>
+          <div class="exposure-game">
+            <span class="eg-icon" style="color:var(--text-muted);">&#127936;</span>
+            <div class="eg-text">
+              <div class="eg-name">Warriors @ Nuggets</div>
+              <div class="eg-sub">Activity: $740</div>
+            </div>
+            <span class="eg-time">10:00 PM</span>
+          </div>
+          <button class="card-action">View Open Activity &#8250;</button>
+        </div>
+
+        <div style="height:24px;"></div>
+      </div>
+    </div>
+
+    <!-- ==================== PICKS ==================== -->
+    <div class="tab-view" id="picksView">
+      <div class="tab-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="title">Picks</span>
+      </div>
+      <div class="tab-scroll">
+        <div class="picks-filters">
+          <div class="picks-seg">
+            <button class="picks-seg-btn active" onclick="picksSeg(this)">Open</button>
+            <button class="picks-seg-btn" onclick="picksSeg(this)">Past</button>
+          </div>
+          <div class="picks-chips">
+            <button class="pick-chip active" onclick="pickChip(this)">All</button>
+            <button class="pick-chip" onclick="pickChip(this)">Singles</button>
+            <button class="pick-chip" onclick="pickChip(this)">Multi-Pick</button>
+            <button class="pick-chip" onclick="pickChip(this)">Futures</button>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-head">
+            <div style="flex:1;">
+              <div class="pick-card-title">Celtics -4.5 (-110)</div>
+              <div class="pick-card-ctx"><span class="pick-card-player">Marcus T.</span> <span class="pick-card-context">&middot; NBA &middot; BOS @ NYK</span></div>
+            </div>
+            <span class="status-pill" style="color:var(--scheduled);background:rgba(123,104,238,0.15);">Open</span>
+          </div>
+          <div class="pick-card-foot">
+            <span class="stake">Stake: $200.00</span>
+            <span class="profit" style="color:var(--accent);">Potential: +$181.82</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-head">
+            <div style="flex:1;">
+              <div class="pick-card-title">76ers -2.5 (-112)</div>
+              <div class="pick-card-ctx"><span class="pick-card-player">Alex J.</span> <span class="pick-card-context">&middot; NBA &middot; LAL @ PHI</span></div>
+            </div>
+            <span class="status-pill" style="color:var(--scheduled);background:rgba(123,104,238,0.15);">Open</span>
+          </div>
+          <div class="pick-card-foot">
+            <span class="stake">Stake: $120.00</span>
+            <span class="profit" style="color:var(--accent);">Potential: +$107.14</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-head">
+            <div style="flex:1;">
+              <div class="pick-card-title">Multi-Pick &middot; 3 Selections (+450)</div>
+              <div class="pick-card-ctx"><span class="pick-card-player">Jake R.</span> <span class="pick-card-context">&middot; 3-Leg Parlay</span></div>
+            </div>
+            <span class="status-pill" style="color:var(--scheduled);background:rgba(123,104,238,0.15);">Open</span>
+          </div>
+          <div class="pick-card-foot">
+            <span class="stake">Stake: $100.00</span>
+            <span class="profit" style="color:var(--accent);">Potential: +$450.00</span>
+            <div class="leg-dots">
+              <div class="leg-dot" style="background:rgba(107,107,123,0.5);"></div>
+              <div class="leg-dot" style="background:rgba(107,107,123,0.5);"></div>
+              <div class="leg-dot" style="background:rgba(107,107,123,0.5);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-head">
+            <div style="flex:1;">
+              <div class="pick-card-title">Over 228.5 (-108)</div>
+              <div class="pick-card-ctx"><span class="pick-card-player">Sarah K.</span> <span class="pick-card-context">&middot; NBA &middot; GSW @ DEN</span></div>
+            </div>
+            <span class="status-pill" style="color:var(--scheduled);background:rgba(123,104,238,0.15);">Open</span>
+          </div>
+          <div class="pick-card-foot">
+            <span class="stake">Stake: $75.00</span>
+            <span class="profit" style="color:var(--accent);">Potential: +$69.44</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-head">
+            <div style="flex:1;">
+              <div class="pick-card-title">Yankees ML (-150)</div>
+              <div class="pick-card-ctx"><span class="pick-card-player">Marcus T.</span> <span class="pick-card-context">&middot; MLB &middot; NYY @ BOS</span></div>
+            </div>
+            <span class="status-pill" style="color:var(--scheduled);background:rgba(123,104,238,0.15);">Open</span>
+          </div>
+          <div class="pick-card-foot">
+            <span class="stake">Stake: $150.00</span>
+            <span class="profit" style="color:var(--accent);">Potential: +$100.00</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-head">
+            <div style="flex:1;">
+              <div class="pick-card-title">Rangers ML (+135)</div>
+              <div class="pick-card-ctx"><span class="pick-card-player">Chris M.</span> <span class="pick-card-context">&middot; NHL &middot; NYR @ CAR</span></div>
+            </div>
+            <span class="status-pill" style="color:var(--scheduled);background:rgba(123,104,238,0.15);">Open</span>
+          </div>
+          <div class="pick-card-foot">
+            <span class="stake">Stake: $60.00</span>
+            <span class="profit" style="color:var(--accent);">Potential: +$81.00</span>
+          </div>
+        </div>
+
+        <div style="height:16px;"></div>
+      </div>
+    </div>
+
+    <!-- ==================== MEMBERS ==================== -->
+    <div class="tab-view" id="membersView">
+      <div class="tab-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="title">Members</span>
+      </div>
+      <div class="tab-scroll">
+        <div class="members-search">
+          <input type="text" placeholder="Search members..." />
+        </div>
+        <div class="members-chips">
+          <button class="member-chip active" onclick="memChip(this)">All (5)</button>
+          <button class="member-chip" onclick="memChip(this)">Attention</button>
+          <button class="member-chip" onclick="memChip(this)">Overdue</button>
+          <button class="member-chip" onclick="memChip(this)">High exposure</button>
+          <button class="member-chip" onclick="memChip(this)">Big winners</button>
+        </div>
+
+        <div class="card member-card">
+          <div class="mc-top">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="mc-name">Marcus T.</span>
+              <span class="pill pill-solid-accent" style="font-size:11px;">Active</span>
+            </div>
+            <span class="mc-balance" style="color:var(--danger);">-$420</span>
+          </div>
+          <div class="mc-credit">Credit: $460 / $500 &middot; 92%</div>
+          <div class="mc-metrics">
+            <div class="mc-metric"><div class="mm-label">Open</div><div class="mm-value">$350</div></div>
+            <div class="mc-metric"><div class="mm-label">7d P/L</div><div class="mm-value" style="color:var(--danger);">-$180</div></div>
+            <div class="mc-metric"><div class="mm-label">Win Rate</div><div class="mm-value">42%</div></div>
+            <div class="mc-metric"><div class="mm-label">Avg Pick</div><div class="mm-value">$85</div></div>
+          </div>
+          <div class="mc-tags">
+            <span class="pill pill-warning">Overdue</span>
+            <span class="pill pill-danger">Near Limit</span>
+            <span class="pill pill-muted">Whale</span>
+          </div>
+        </div>
+
+        <div class="card member-card">
+          <div class="mc-top">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="mc-name">Jake R.</span>
+              <span class="pill pill-solid-accent" style="font-size:11px;">Active</span>
+            </div>
+            <span class="mc-balance" style="color:var(--danger);">-$185</span>
+          </div>
+          <div class="mc-credit">Credit: $340 / $500 &middot; 68%</div>
+          <div class="mc-metrics">
+            <div class="mc-metric"><div class="mm-label">Open</div><div class="mm-value">$100</div></div>
+            <div class="mc-metric"><div class="mm-label">7d P/L</div><div class="mm-value" style="color:var(--accent);">+$310</div></div>
+            <div class="mc-metric"><div class="mm-label">Win Rate</div><div class="mm-value" style="color:var(--accent);">78%</div></div>
+            <div class="mc-metric"><div class="mm-label">Avg Pick</div><div class="mm-value">$65</div></div>
+          </div>
+          <div class="mc-tags">
+            <span class="pill pill-accent">On Heater</span>
+            <span class="pill pill-accent">Parlay Demon</span>
+          </div>
+        </div>
+
+        <div class="card member-card">
+          <div class="mc-top">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="mc-name">Alex J.</span>
+              <span class="pill pill-solid-accent" style="font-size:11px;">Active</span>
+            </div>
+            <span class="mc-balance" style="color:var(--accent);">+$385</span>
+          </div>
+          <div class="mc-credit">Credit: $115 / $500 &middot; 23%</div>
+          <div class="mc-metrics">
+            <div class="mc-metric"><div class="mm-label">Open</div><div class="mm-value">$220</div></div>
+            <div class="mc-metric"><div class="mm-label">7d P/L</div><div class="mm-value" style="color:var(--accent);">+$145</div></div>
+            <div class="mc-metric"><div class="mm-label">Win Rate</div><div class="mm-value" style="color:var(--accent);">73%</div></div>
+            <div class="mc-metric"><div class="mm-label">Avg Pick</div><div class="mm-value">$90</div></div>
+          </div>
+        </div>
+
+        <div class="card member-card">
+          <div class="mc-top">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="mc-name">Sarah K.</span>
+              <span class="pill pill-solid-accent" style="font-size:11px;">Active</span>
+            </div>
+            <span class="mc-balance" style="color:var(--accent);">+$397</span>
+          </div>
+          <div class="mc-credit">Credit: $78 / $500 &middot; 16%</div>
+          <div class="mc-metrics">
+            <div class="mc-metric"><div class="mm-label">Open</div><div class="mm-value">$75</div></div>
+            <div class="mc-metric"><div class="mm-label">7d P/L</div><div class="mm-value" style="color:var(--accent);">+$72</div></div>
+            <div class="mc-metric"><div class="mm-label">Win Rate</div><div class="mm-value" style="color:var(--accent);">65%</div></div>
+            <div class="mc-metric"><div class="mm-label">Avg Pick</div><div class="mm-value">$55</div></div>
+          </div>
+        </div>
+
+        <div class="card member-card">
+          <div class="mc-top">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="mc-name">Chris M.</span>
+              <span class="pill pill-solid-accent" style="font-size:11px;">Active</span>
+            </div>
+            <span class="mc-balance" style="color:var(--danger);">-$330</span>
+          </div>
+          <div class="mc-credit">Credit: $225 / $500 &middot; 45%</div>
+          <div class="mc-metrics">
+            <div class="mc-metric"><div class="mm-label">Open</div><div class="mm-value">$60</div></div>
+            <div class="mc-metric"><div class="mm-label">7d P/L</div><div class="mm-value" style="color:var(--danger);">-$245</div></div>
+            <div class="mc-metric"><div class="mm-label">Win Rate</div><div class="mm-value" style="color:var(--danger);">31%</div></div>
+            <div class="mc-metric"><div class="mm-label">Avg Pick</div><div class="mm-value">$40</div></div>
+          </div>
+          <div class="mc-tags">
+            <span class="pill pill-danger">Cold Streak</span>
+          </div>
+        </div>
+
+        <button class="invite-btn">Invite Member</button>
+        <div style="height:16px;"></div>
+      </div>
+    </div>
+
+    <!-- ==================== EVENTS ==================== -->
+    <div class="tab-view" id="eventsView">
+      <div class="tab-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="title">Events</span>
+      </div>
+      <div class="tab-scroll">
+        <div class="card-section-label">Sports</div>
+        <div class="card sport-card"><span class="sc-icon">&#127936;</span><span class="sc-name">Basketball</span><span class="sc-count">3 events</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#9918;</span><span class="sc-name">Baseball</span><span class="sc-count">2 events</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#127954;</span><span class="sc-name">Hockey</span><span class="sc-count">1 event</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#127944;</span><span class="sc-name">Football</span><span class="sc-count">0 events</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#9917;</span><span class="sc-name">Soccer</span><span class="sc-count">4 events</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#129354;</span><span class="sc-name">MMA</span><span class="sc-count">1 event</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#127934;</span><span class="sc-name">Tennis</span><span class="sc-count">6 events</span><span class="sc-chevron">&#8250;</span></div>
+        <div class="card sport-card"><span class="sc-icon">&#9971;</span><span class="sc-name">Golf</span><span class="sc-count">2 events</span><span class="sc-chevron">&#8250;</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== SETTINGS ==================== -->
+    <div class="tab-view" id="settingsView">
+      <div class="tab-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="title">Settings</span>
+      </div>
+      <div class="tab-scroll">
+        <div class="card" style="padding:0;">
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+            <div class="sr-text"><div class="sr-title">Profile</div></div>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg></span>
+            <div class="sr-text"><div class="sr-title">Change Password</div></div>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <div class="sr-text"><div class="sr-title">Notifications</div></div>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--gold)" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></span>
+            <div class="sr-text">
+              <div class="sr-title">Subscription</div>
+            </div>
+            <span class="sr-trailing">Pro</span>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+            <div class="sr-text"><div class="sr-title">Member Settings</div></div>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M10.5 13H8v-3h2.5V7.5h3V10H16v3h-2.5v2.5h-3V13zM12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/></svg></span>
+            <div class="sr-text">
+              <div class="sr-title" style="display:flex;align-items:center;gap:8px;">Pick Management <span class="pill pill-solid-accent" style="font-size:11px;padding:3px 8px;">PRO</span></div>
+              <div class="sr-sub">Manual approval, grading rules</div>
+            </div>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+          <div class="settings-row">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></span>
+            <div class="sr-text"><div class="sr-title">About</div></div>
+            <span class="sr-chevron">&#8250;</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <div class="settings-row danger">
+            <span class="sr-icon"><svg viewBox="0 0 24 24"><path fill="var(--danger)" d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></span>
+            <div class="sr-text"><div class="sr-title">Log Out</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span class="tab-label">Dashboard</span>
+      </button>
+      <button class="tab-item" data-tab="picks" onclick="switchTab('picks')" style="position:relative;">
+        <svg viewBox="0 0 24 24"><path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z"/></svg>
+        <span class="tab-badge">6</span>
+        <span class="tab-label">Picks</span>
+      </button>
+      <button class="tab-item" data-tab="members" onclick="switchTab('members')">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        <span class="tab-label">Members</span>
+      </button>
+      <button class="tab-item" data-tab="events" onclick="switchTab('events')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-.52.07-1.04.07-1.57.04l2.63-4.55 2.14 1.23A7.93 7.93 0 0113 19.93zM5.94 17.07c-.47-.56-.87-1.18-1.18-1.85l3.5-2.02 1.22 2.12-3.54 1.75zm-.87-5.07H4.05c.16-1.59.79-3.04 1.73-4.22l.7 1.22-1.41 2.99zm2.36-6.43A7.93 7.93 0 0112 4.07l-1.03 4.78L7.43 5.57zM18.07 6.93l-3.54 1.75-1.22-2.12 3.5-2.02c.47.56.87 1.18 1.18 1.85z"/></svg>
+        <span class="tab-label">Events</span>
+      </button>
+      <button class="tab-item" data-tab="settings" onclick="switchTab('settings')">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span class="tab-label">Settings</span>
+      </button>
+    </div>
+
+    <div class="home-indicator"><div class="home-indicator-bar"></div></div>
+  </div>
+</div>
+
+<script>
+const viewIds = { dashboard:'dashboardView', picks:'picksView', members:'membersView', events:'eventsView', settings:'settingsView' };
+
+function switchTab(tab) {
+  Object.entries(viewIds).forEach(([k,id]) => {
+    document.getElementById(id).classList.toggle('active', k === tab);
+  });
+  document.querySelectorAll('.tab-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+}
+
+function setTime(el) {
+  el.parentElement.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function picksSeg(el) {
+  el.parentElement.querySelectorAll('.picks-seg-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function pickChip(el) {
+  el.parentElement.querySelectorAll('.pick-chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function memChip(el) {
+  el.parentElement.querySelectorAll('.member-chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

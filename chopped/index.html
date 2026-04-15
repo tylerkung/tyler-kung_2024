@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="/assets/img/favicon.ico">
+	<meta name="robots" content="noindex, nofollow" />
+	<meta name="description" content="Chopped Leagues Case Study — Tyler Kung" />
+	<link rel="stylesheet" href="/css/styles.css" />
+	<title>Chopped Leagues — Tyler Kung</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<style>
+		/* Disable noise overlay so backdrop-filter works */
+		body:after {
+			display: none !important;
+		}
+
+		/* ===== HEADER LOGO SWAP ===== */
+		.header-row .box-logo .logo-chopped {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			border-radius: 8px;
+			object-fit: cover;
+			transition: opacity 0.2s ease;
+			z-index: 2;
+		}
+		.header-row .box-logo .logo {
+			z-index: 1;
+		}
+		.header-row .box-logo:hover .logo-chopped {
+			opacity: 0;
+		}
+
+		/* ===== HERO SPLASH ===== */
+		.hero-splash {
+			text-align: center;
+			padding: 48px 0 64px;
+			margin-bottom: 24px;
+			background: radial-gradient(ellipse at center, rgba(33, 33, 33, 1) 0%, rgba(33, 33, 33, 0.95) 30%, rgba(33, 33, 33, 0.7) 50%, transparent 75%);
+		}
+		.hero-splash .hero-icon {
+			width: 120px;
+			margin-bottom: 24px;
+			border-radius: 22px;
+		}
+		.hero-splash .hero-title {
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+			font-size: 3em;
+			font-weight: 600;
+			letter-spacing: -1px;
+			line-height: 1.1;
+			margin-bottom: 16px;
+		}
+		@media (max-width: 767px) {
+			.hero-splash .hero-title { font-size: 2em; }
+			.hero-splash { padding: 48px 0 40px; }
+		}
+		.hero-splash .hero-subtitle {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			line-height: 1.7;
+			max-width: 560px;
+			margin: 0 auto 24px;
+		}
+		.hero-splash .hero-phones {
+			display: flex;
+			justify-content: center;
+			gap: 24px;
+			align-items: flex-end;
+			margin-top: 48px;
+		}
+		.hero-splash .hero-phones .phone {
+			flex: 0 1 220px;
+			max-width: 220px;
+		}
+		.hero-splash .hero-phones .phone:first-child {
+			transform: rotate(-4deg);
+		}
+		.hero-splash .hero-phones .phone:last-child {
+			transform: rotate(4deg);
+		}
+		.hero-splash .hero-phones .phone img {
+			width: 100%;
+			border-radius: 16px;
+			box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+		}
+		@media (max-width: 767px) {
+			.hero-splash .hero-phones .phone {
+				flex: 0 1 160px;
+				max-width: 160px;
+			}
+		}
+
+		/* ===== PASSWORD GATE ===== */
+		.gate {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 10000;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			background-color: #212121;
+			transition: opacity 0.5s ease, visibility 0.5s ease;
+		}
+		.gate.unlocked {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
+		.gate-box {
+			text-align: center;
+			max-width: 400px;
+			padding: 48px 40px;
+			border-radius: 8px;
+			background-color: rgba(33, 33, 33, 0.6);
+			backdrop-filter: blur(8px);
+			-webkit-backdrop-filter: blur(8px);
+			outline: 2px solid #BFEAFC;
+		}
+		.gate-box h2 {
+			margin-top: 0;
+			font-size: 1.4em;
+		}
+		.gate-box p {
+			font-size: 0.75em;
+			opacity: 0.6;
+			margin-bottom: 24px;
+		}
+		.gate-input {
+			width: 100%;
+			padding: 12px 16px;
+			border: 2px solid rgba(191, 234, 252, 0.3);
+			border-radius: 8px;
+			background: rgba(10, 10, 18, 0.6);
+			color: #BFEAFC;
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+			font-size: 1em;
+			font-weight: 300;
+			letter-spacing: 2px;
+			text-align: center;
+			outline: none;
+			transition: border-color 0.3s ease, box-shadow 0.3s ease;
+		}
+		.gate-input:focus {
+			border-color: #BFEAFC;
+			box-shadow: 0 0 16px rgba(191, 234, 252, 0.15);
+		}
+		.gate-input.error {
+			border-color: #FF6B6B;
+			animation: shake 0.4s ease;
+		}
+		@keyframes shake {
+			0%, 100% { transform: translateX(0); }
+			25% { transform: translateX(-8px); }
+			50% { transform: translateX(8px); }
+			75% { transform: translateX(-4px); }
+		}
+
+		/* ===== CASE STUDY LAYOUT ===== */
+		.case-study-wrapper {
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 0 24px 80px;
+			align-self: flex-start;
+		}
+		@media (min-width: 968px) {
+			.case-study-wrapper { padding: 0 32px 120px; }
+		}
+		.case-study-wrapper .section-box {
+			position: relative;
+			margin-bottom: 24px;
+			padding: 48px 40px 40px;
+			height: auto !important;
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+		}
+		@media (max-width: 767px) {
+			.case-study-wrapper .section-box { padding: 48px 20px 32px; }
+		}
+		.case-study-wrapper .section-box .tag {
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+		}
+		.section-box h2 {
+			font-size: 1.6em;
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+		@media (max-width: 767px) {
+			.section-box h2 { font-size: 1.3em; }
+		}
+		.section-box h3 {
+			font-size: 1.1em;
+			margin-top: 32px;
+			margin-bottom: 8px;
+			color: #E9DAA1;
+		}
+		.section-box p {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			line-height: 1.8;
+			margin-bottom: 16px;
+		}
+		.section-box ul {
+			padding-left: 20px;
+			margin-bottom: 16px;
+		}
+		.section-box li {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			color: #BFEAFC;
+			line-height: 1.8;
+			margin-bottom: 8px;
+		}
+		.section-box li strong {
+			color: #E9DAA1;
+			font-weight: 500;
+		}
+		.section-box .callout {
+			border-left: 3px solid #E9DAA1;
+			padding: 16px 20px;
+			margin: 24px 0;
+			background: rgba(233, 218, 161, 0.05);
+			border-radius: 0 8px 8px 0;
+		}
+		.section-box .callout p {
+			margin-bottom: 0;
+			font-style: italic;
+		}
+		.section-box .stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+			gap: 16px;
+			margin: 24px 0;
+		}
+		.section-box .stat-card {
+			padding: 20px;
+			border-radius: 8px;
+			background: rgba(33, 33, 33, 0.4);
+			outline: 1px solid rgba(191, 234, 252, 0.2);
+			text-align: center;
+		}
+		.section-box .stat-value {
+			font-size: 1.4em;
+			font-weight: 600;
+			color: #E9DAA1;
+			display: block;
+			margin-bottom: 4px;
+		}
+		.section-box .stat-label {
+			font-size: 0.65em;
+			font-weight: 300;
+		}
+		.section-box .phone-pair {
+			display: flex;
+			gap: 24px;
+			justify-content: center;
+			align-items: flex-start;
+			margin: 32px 0 40px;
+		}
+		@media (max-width: 767px) {
+			.section-box .phone-pair {
+				flex-direction: column;
+				align-items: center;
+				gap: 16px;
+			}
+		}
+		.section-box .phone-pair .phone {
+			flex: 0 1 260px;
+			max-width: 260px;
+		}
+		.section-box .phone-pair .phone img {
+			width: 100%;
+			border-radius: 12px;
+			outline: 1px solid rgba(191, 234, 252, 0.1);
+		}
+		.section-box .phone-pair .phone-label {
+			text-align: center;
+			font-size: 0.65em;
+			font-weight: 400;
+			color: #E9DAA1;
+			margin-top: 8px;
+		}
+		/* ===== TWO-COL FEATURE LAYOUT ===== */
+		.section-box .feature-row {
+			display: flex;
+			gap: 32px;
+			align-items: flex-start;
+			margin: 32px 0;
+		}
+		.section-box .feature-row:nth-child(even) {
+			flex-direction: row-reverse;
+		}
+		.section-box .feature-row .feature-text {
+			flex: 1;
+			min-width: 0;
+		}
+		.section-box .feature-row .feature-text h3 {
+			margin-top: 0;
+		}
+		.section-box .feature-row .feature-phone {
+			flex: 0 0 220px;
+		}
+		.section-box .feature-row .feature-phone img {
+			width: 100%;
+			border-radius: 12px;
+			outline: 1px solid rgba(191, 234, 252, 0.1);
+		}
+		@media (max-width: 767px) {
+			.section-box .feature-row,
+			.section-box .feature-row:nth-child(even) {
+				flex-direction: column;
+				align-items: center;
+			}
+			.section-box .feature-row .feature-phone {
+				flex: 0 0 auto;
+				max-width: 260px;
+				width: 100%;
+			}
+		}
+
+		/* ===== TIMELINE ===== */
+		.timeline {
+			display: flex;
+			position: relative;
+			margin: 32px 0 16px;
+			padding: 0;
+			list-style: none;
+		}
+		.timeline::before {
+			content: '';
+			position: absolute;
+			top: 10px;
+			left: 0;
+			right: 0;
+			height: 2px;
+			background: rgba(191, 234, 252, 0.2);
+		}
+		.timeline .tl-item {
+			flex: 1;
+			position: relative;
+			padding-top: 28px;
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+		}
+		.timeline .tl-item::before {
+			content: '';
+			position: absolute;
+			top: 4px;
+			left: 0;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			background: #BFEAFC;
+			border: 2px solid #212121;
+		}
+		.timeline .tl-item.tl-launch::before {
+			background: #E9DAA1;
+			box-shadow: 0 0 8px rgba(233, 218, 161, 0.4);
+		}
+		.timeline .tl-date {
+			font-size: 0.7em;
+			font-weight: 500;
+			color: #E9DAA1;
+			display: block;
+			margin-bottom: 4px;
+		}
+		.timeline .tl-label {
+			font-size: 0.65em;
+			font-weight: 400;
+			color: #BFEAFC;
+		}
+		@media (max-width: 767px) {
+			.timeline {
+				flex-direction: column;
+				gap: 24px;
+				padding-left: 24px;
+			}
+			.timeline::before {
+				top: 0;
+				bottom: 0;
+				left: 5px;
+				right: auto;
+				width: 2px;
+				height: auto;
+			}
+			.timeline .tl-item {
+				padding-top: 0;
+				padding-left: 0;
+			}
+			.timeline .tl-item::before {
+				top: 2px;
+				left: -24px;
+			}
+		}
+
+		.section-box .footer-sig {
+			text-align: center;
+			font-size: 0.7em;
+			margin-top: 64px;
+		}
+	</style>
+</head>
+
+<body>
+
+<!-- PASSWORD GATE -->
+<div class="gate" id="gate">
+	<div class="gate-box">
+		<h2>This page is protected</h2>
+		<p>Enter the password to view this case study.</p>
+		<input
+			type="password"
+			class="gate-input"
+			id="gate-input"
+			placeholder="password"
+			autocomplete="off"
+			autofocus
+		/>
+	</div>
+</div>
+
+<!-- CASE STUDY CONTENT -->
+<div class="wrapper">
+	<div class="main">
+<div class="container">
+	<div class="row header-row">
+		<div class="top-header-logo">
+			<div class="box-logo">
+				<a href="/">
+					<img src="/chopped/assets/sleeper-icon.png" alt="Sleeper" class="logo-chopped" />
+					<svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M44.5123 70.7059C48.2247 69.541 52.0809 68.172 56.0001 66.6093C57.968 65.8247 59.8909 65.0156 61.7603 64.1882C62.6308 63.8028 63.4898 63.413 64.3363 63.0202C70.0572 60.3661 75.2099 57.5574 79.532 54.7792C81.0851 53.7808 82.5306 52.7862 83.8571 51.8044C87.2133 49.3205 89.8999 46.8483 91.6096 44.5234C93.2456 42.2988 94.3755 39.6592 93.383 37.17C92.3905 34.6808 89.7543 33.5428 87.0366 33.0541C84.1962 32.5434 80.5457 32.5979 76.4011 33.1047C72.0912 33.6317 67.1212 34.6641 61.7603 36.1634V29.728H44.5123V42.1303C43.3866 42.5915 42.2767 43.0603 41.1842 43.5357V41.712H37.3202V31.352H26.6802L20.4082 41.712H18.6162V48.824H20.1842V54.8773C19.4756 55.3651 18.7945 55.8509 18.1422 56.3337C14.786 58.8176 12.0994 61.2898 10.3897 63.6147C8.75371 65.8393 7.62377 68.4789 8.61627 70.9681C9.60878 73.4574 12.2449 74.5954 14.9627 75.084C17.8031 75.5947 21.4536 75.5402 25.5982 75.0334C31.0332 74.3688 37.5177 72.9006 44.5123 70.7059ZM76.3004 52.0904C78.1944 50.9092 79.9273 49.7365 81.4775 48.5892C84.6842 46.216 87.0146 44.02 88.3872 42.1536C89.8335 40.1869 89.8511 39.112 89.6675 38.6514C89.4838 38.1909 88.7315 37.423 86.3287 36.991C84.0486 36.581 80.8465 36.591 76.8866 37.0752C72.5179 37.6093 67.3679 38.7025 61.7603 40.3218V47.816L67.5843 41.712H83.0963L74.5283 50.616L76.3004 52.0904ZM44.5123 46.4618V66.508C43.6748 66.7786 42.8451 67.0386 42.0242 67.2877V63.888H37.3202V49.7048C37.9321 49.4097 38.552 49.116 39.1794 48.824H41.1842V47.9083C42.2735 47.4201 43.3834 46.9374 44.5123 46.4618ZM20.1842 59.8005V65.736L26.4323 70.888C25.985 70.9518 25.545 71.0101 25.1127 71.063C21.1528 71.5472 17.9507 71.5571 15.6705 71.1472C13.2678 70.7151 12.5155 69.9473 12.3318 69.4867C12.1482 69.0261 12.1658 67.9513 13.6121 65.9845C14.936 64.1842 17.1512 62.0773 20.1842 59.8005Z" fill="#BFEAFC"/>
+					<path d="M64.3363 71V69.9787C64.7317 69.5591 65.1223 69.1339 65.5108 68.7111C67.3547 66.7037 69.1516 64.7477 71.2025 63.6833C73.7514 62.3604 77.8996 60.2074 81.5283 58.0639V71H64.3363Z" fill="#BFEAFC"/>
+					</svg>
+				</a>
+			</div>
+		</div>
+		<div class="marquee-wrapper">
+			<div class="marquee-container">
+				<div class="marquee">
+					<div class="item">CHOPPED LEAGUES</div>
+					<div class="item">CASE STUDY</div>
+					<div class="item">SLEEPER</div>
+					<div class="item">FANTASY FOOTBALL</div>
+					<div class="item">CONCEPT TO LAUNCH IN 8 DAYS</div>
+				</div>
+				<div class="marquee" aria-hidden="true">
+					<div class="item">CHOPPED LEAGUES</div>
+					<div class="item">CASE STUDY</div>
+					<div class="item">SLEEPER</div>
+					<div class="item">FANTASY FOOTBALL</div>
+					<div class="item">CONCEPT TO LAUNCH IN 8 DAYS</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="case-study-wrapper">
+
+	<!-- HERO SPLASH -->
+	<div class="hero-splash">
+		<h1 class="hero-title">Chopped Leagues</h1>
+		<p class="hero-subtitle">Designing and shipping a new fantasy football game format at Sleeper: from competitor announcement to launch in 8 days.</p>
+		<div class="hero-phones">
+			<div class="phone">
+				<img src="/chopped/assets/chopped_04_game_02_live_proj_v2.jpg" alt="Chopped Leaderboard" />
+			</div>
+			<div class="phone">
+				<img src="/chopped/assets/chopped_04_game_04_chopped.jpg" alt="Chopped Graveyard" />
+			</div>
+		</div>
+	</div>
+
+	<!-- 01 CONTEXT -->
+	<div class="box section-box">
+		<div class="tag">01 // context</div>
+		<div style="padding-top: 48px;">
+			<h2>Survive or Get Chopped</h2>
+		</div>
+		<p>Guillotine Leagues are one of the most brutal, and most entertaining, ways to enjoy fantasy football. Each week, the lowest-scoring team is eliminated and their roster is dropped into free agency. Your season can be over in a single bad week.</p>
+		<p>At Sleeper, we noticed users hacking together their own Guillotine leagues manually. Commissioners were painstakingly dropping players one by one, running complex rules in spreadsheets, and doing everything they could to keep the fun alive. We had plans to eventually support the format, but on August 4th Yahoo announced their own Guillotine Leagues.</p>
+		<div class="callout">
+			<p>As a team, we looked at each other and said: "Can we get this done before the season?" We decided to sprint.</p>
+		</div>
+		<p>We later received a C&D from guillotineleagues.com over the name, which led to the decision to rebrand to "Chopped": a name that stuck and that users adopted organically.</p>
+	</div>
+
+	<!-- 02 PROBLEM -->
+	<div class="box section-box">
+		<div class="tag">02 // problem</div>
+		<div style="padding-top: 48px;">
+			<h2>Problem Definition</h2>
+		</div>
+		<p>To make Chopped a success on Sleeper, we needed to solve three critical problems:</p>
+		<ul>
+			<li><strong>Bug-free play</strong> — a buggy product would kill adoption immediately.</li>
+			<li><strong>Clarity</strong> — users must instantly understand the state of their team and league standings.</li>
+			<li><strong>Engagement for eliminated users</strong> — once you're chopped, the experience often ends. We wanted to keep it fun, even after your season was over.</li>
+		</ul>
+		<p>Pain points from the market reinforced this: GuillotineLeagues.com was buggy and unreliable. Manual commissioner work on Sleeper, ESPN, and Yahoo was tedious with no league support. Eliminated users had no meaningful way to stay engaged.</p>
+	</div>
+
+	<!-- 03 ROLE -->
+	<div class="box section-box">
+		<div class="tag">03 // role</div>
+		<div style="padding-top: 48px;">
+			<h2>My Role</h2>
+		</div>
+		<p>I was the <strong>lead designer</strong> on Chopped Leagues, working closely with the fantasy pod: front-end engineers, back-end engineers, researchers, and PMs. I scoped and delivered a workable V1 design in just two days.</p>
+		<ul>
+			<li><strong>Kickoff</strong> — I ran the initial brainstorm and kickoff call, guiding creative conversations into a focused feature list. My job was to harness the team's endless ideas, cut through tangents, and prioritize ruthlessly.</li>
+			<li><strong>Prioritization</strong> — we separated "must-haves" (league creation, basic settings, leaderboard) from "nice-to-haves" that could come later.</li>
+			<li><strong>Innovation</strong> — I pushed beyond parity by proposing delight features unique to Sleeper: a graveyard for eliminated teams, a dropped players section, and ceremonial eliminations.</li>
+			<li><strong>Branding</strong> — championed assets for the game format, making it instantly recognizable and distinct from Sleeper's existing product suite.</li>
+		</ul>
+	</div>
+
+	<!-- 04 PROCESS -->
+	<div class="box section-box">
+		<div class="tag">04 // process</div>
+		<div style="padding-top: 48px;">
+			<h2>Process &amp; Exploration</h2>
+		</div>
+		<p>I started by benchmarking competitors and running play-tests on GuillotineLeagues.com and Yahoo. It confirmed what users were saying: the experience was buggy, clunky, and tedious.</p>
+		<p>One key debate shaped the direction of the product:</p>
+		<ul>
+			<li><strong>Option A: Dynamic Matchup</strong> — mimic Yahoo's model by showing your team head-to-head against the current last-place team.</li>
+			<li><strong>Option B: Leaderboard View</strong> — a clear, real-time ranking of all teams, with the lowest score front and center.</li>
+		</ul>
+		<div class="phone-pair">
+			<div class="phone">
+				<img src="/chopped/assets/Guillotine-1.jpg" alt="Dynamic Matchup View" />
+				<div class="phone-label">Option A: Dynamic Matchup</div>
+			</div>
+			<div class="phone">
+				<img src="/chopped/assets/Guillotine.jpg" alt="Leaderboard View" />
+				<div class="phone-label">Option B: Leaderboard View</div>
+			</div>
+		</div>
+		<p>I mocked up both versions, presented pros and cons to the team, and advocated strongly for the <strong>leaderboard view</strong>. The leaderboard embraced the cutthroat spirit of Chopped: every manager can see the danger of falling into last place, and the tension builds as scores shift live. The team aligned behind this vision, and it became the cornerstone of our experience.</p>
+	</div>
+
+	<!-- 05 SOLUTION -->
+	<div class="box section-box">
+		<div class="tag">05 // solution</div>
+		<div style="padding-top: 48px;">
+			<h2>Solution</h2>
+		</div>
+
+		<div class="feature-row">
+			<div class="feature-text">
+				<h3>Leaderboard View</h3>
+				<p>Info-dense, clear, and dynamic. Keeps tension front and center.</p>
+				<ul>
+					<li>Real-time projections and risk percentage</li>
+					<li>Flipped order, last place on top</li>
+					<li>Separated sections by risk level</li>
+					<li>Prioritized familiarity with existing Sleeper users</li>
+				</ul>
+			</div>
+			<div class="feature-phone">
+				<img src="/chopped/assets/chopped_04_game_02_live_proj_v2.jpg" alt="Leaderboard View" />
+			</div>
+		</div>
+
+		<div class="feature-row">
+			<div class="feature-text">
+				<h3>Dropped Players</h3>
+				<p>A weekly highlight reel of fallen rosters, adding drama as stars hit free agency. Gives leaguemates the resources they need to escape the weekly danger zone.</p>
+				<ul>
+					<li>Automatically surfaces dropped players</li>
+					<li>Adds weekly drama as stars hit FA</li>
+					<li>One-stop shop for all managers</li>
+				</ul>
+			</div>
+			<div class="feature-phone">
+				<img src="/chopped/assets/chopped_04_game_13_chopped_players.jpg" alt="Dropped Players" />
+			</div>
+		</div>
+
+		<div class="feature-row">
+			<div class="feature-text">
+				<h3>Graveyard</h3>
+				<p>A permanent record of chopped teams, with stats and history to honor their demise. Eliminated leaguemates aren't removed, just relocated.</p>
+				<ul>
+					<li>Celebrate the final moments</li>
+					<li>Each week adds a new chapter of history</li>
+					<li>Engagement continues after elimination</li>
+				</ul>
+			</div>
+			<div class="feature-phone">
+				<img src="/chopped/assets/chopped_04_game_04_chopped.jpg" alt="Graveyard" />
+			</div>
+		</div>
+
+		<div class="feature-row">
+			<div class="feature-text">
+				<h3>Moments of Delight</h3>
+				<ul>
+					<li><strong>Elimination Banner</strong> — on Monday night, after the final game, a "CHOPPED" banner highlights the last-place team's score.</li>
+					<li><strong>Chat Announcement</strong> — automatically posted to spark banter and league-wide reactions.</li>
+					<li><strong>Elimination Badges</strong> — randomized "death badges" (devil horns, angel halos) given to eliminated teams. A playful nod to the brutality of Chopped.</li>
+				</ul>
+			</div>
+			<div class="feature-phone">
+				<img src="/chopped/assets/chopped_04_game_19_chat.jpg" alt="Chat Announcement" />
+			</div>
+		</div>
+
+		<p>These details balanced clarity with personality, making Chopped leagues not just playable, but memorable, all within the allotted time frame.</p>
+	</div>
+
+	<!-- 06 TIMELINE -->
+	<div class="box section-box">
+		<div class="tag">06 // timeline</div>
+		<div style="padding-top: 48px;">
+			<h2>Timeline</h2>
+		</div>
+		<div class="timeline">
+			<div class="tl-item">
+				<span class="tl-date">Aug 5</span>
+				<span class="tl-label">Begin design</span>
+			</div>
+			<div class="tl-item">
+				<span class="tl-date">Aug 8</span>
+				<span class="tl-label">V1 design launch</span>
+			</div>
+			<div class="tl-item">
+				<span class="tl-date">Aug 10-12</span>
+				<span class="tl-label">Internal playtest & QA</span>
+			</div>
+			<div class="tl-item tl-launch">
+				<span class="tl-date">Aug 13</span>
+				<span class="tl-label">Beta launch</span>
+			</div>
+		</div>
+		<p>Concept to beta launch in 8 days.</p>
+	</div>
+
+	<!-- 07 IMPACT -->
+	<div class="box section-box">
+		<div class="tag">07 // impact</div>
+		<div style="padding-top: 48px;">
+			<h2>Impact &amp; Results</h2>
+		</div>
+		<div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+			<div class="stat-card">
+				<span class="stat-value">8%</span>
+				<span class="stat-label">of All New Leagues are Chopped</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">111K</span>
+				<span class="stat-label">Unique Users (as of Aug 27)</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">8 days</span>
+				<span class="stat-label">Concept to Beta Launch</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">2 days</span>
+				<span class="stat-label">V1 Design Delivery</span>
+			</div>
+		</div>
+		<p>Even in the preseason, we saw strong traction. Early user buzz on social media highlighted both the excitement of the format and the fun details we added to celebrate eliminations. Users began adopting the "Chopped" name over "Guillotine" organically.</p>
+	</div>
+
+	<!-- 08 REFLECTION -->
+	<div class="box section-box">
+		<div class="tag">08 // reflection</div>
+		<div style="padding-top: 48px;">
+			<h2>Reflection</h2>
+		</div>
+		<ul>
+			<li><strong>Guiding Creativity Under Pressure</strong> — our team is highly imaginative, sometimes to a fault. Almost everyone had a great idea. This project showed me how to channel that energy, prioritize, and get to a focused V1 quickly.</li>
+			<li><strong>Thriving in Urgency</strong> — from concept to design to development, Chopped was built in record time. It reinforced my ability to thrive under high-stakes, fast-moving conditions.</li>
+			<li><strong>Clarity + Drama = Great Design</strong> — Chopped reminded me that design isn't just about usability; it's about emotion. The leaderboard made tension clear, and the elimination moments made it unforgettable.</li>
+		</ul>
+		<p>Chopped was especially exciting for me because I love the strategy of learning new games: understanding rules, how to win, and how those rules shape behavior. Translating that into design meant creating tools that gave users clarity, while also leaning into the brutality that makes Chopped so fun.</p>
+
+		<h3>Next Opportunities</h3>
+		<ul>
+			<li>Enhanced weekly reports with league highlights</li>
+			<li>More playful personalization for eliminated users</li>
+			<li>Expanded rulesets (flexible eliminations, playoff variants)</li>
+		</ul>
+
+		<p class="footer-sig">Designed at Sleeper. 2025.</p>
+	</div>
+
+	<!-- CONTACT -->
+	<div class="box section-box" style="padding-top: 64px; font-family: 'Tomorrow', Helvetica, Arial, sans-serif;">
+		<div class="tag">more work</div>
+		<div style="display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap;">
+			<a href="/booki/" style="flex: 1; min-width: 200px; text-decoration: none; color: inherit; padding: 20px; border-radius: 8px; outline: 1px solid rgba(191, 234, 252, 0.2); transition: outline-color 0.2s ease;">
+				<span style="font-size: 0.7em; color: #E9DAA1; display: block; margin-bottom: 4px;">Side Project</span>
+				<span style="font-size: 0.85em; font-weight: 500;">Booki: Be The House &rarr;</span>
+			</a>
+			<a href="/metadraft/" style="flex: 1; min-width: 200px; text-decoration: none; color: inherit; padding: 20px; border-radius: 8px; outline: 1px solid rgba(191, 234, 252, 0.2); transition: outline-color 0.2s ease;">
+				<span style="font-size: 0.7em; color: #E9DAA1; display: block; margin-bottom: 4px;">Side Project</span>
+				<span style="font-size: 0.85em; font-weight: 500;">MetaDraft &rarr;</span>
+			</a>
+		</div>
+	</div>
+
+	<div class="box section-box" style="text-align: center; padding-top: 64px; font-family: 'Tomorrow', Helvetica, Arial, sans-serif;">
+		<div class="tag">contact</div>
+		<p style="margin-bottom: 24px;">tylerbkung@gmail.com</p>
+		<div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-bottom: 24px;">
+			<a href="/tyler_kung_resume_2026.pdf" target="_blank" style="font-size: 0.75em;">resume</a>
+			<a href="https://www.linkedin.com/in/tyler-kung/" target="_blank"><img src="/assets/img/linkedin.svg" alt="LinkedIn" style="height: 24px; opacity: 0.8;"/></a>
+			<a href="https://github.com/tylerkung" target="_blank"><img src="/assets/img/github.svg" alt="GitHub" style="height: 24px; opacity: 0.8;"/></a>
+		</div>
+		<p style="font-size: 0.6em; opacity: 0.5; margin-bottom: 0;">Design + Code by Tyler Kung</p>
+	</div>
+
+</div>
+	</div>
+</div>
+
+<script>
+(function() {
+	var HASH = '81c9d6128b5fcd7bbe4ba65c177388ff767a2017f971c053dcaa6f32b4d6a758';
+	var gate = document.getElementById('gate');
+	var input = document.getElementById('gate-input');
+
+	if (sessionStorage.getItem('chopped_unlocked') === '1') {
+		gate.remove();
+	}
+
+	async function check(value) {
+		var encoder = new TextEncoder();
+		var data = encoder.encode(value);
+		var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+		var hashArray = Array.from(new Uint8Array(hashBuffer));
+		var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+		return hashHex === HASH;
+	}
+
+	input.addEventListener('keydown', async function(e) {
+		if (e.key === 'Enter') {
+			var ok = await check(input.value.trim().toLowerCase());
+			if (ok) {
+				sessionStorage.setItem('chopped_unlocked', '1');
+				gate.classList.add('unlocked');
+				setTimeout(function() { gate.remove(); }, 600);
+			} else {
+				input.classList.add('error');
+				input.value = '';
+				input.setAttribute('placeholder', 'try again');
+				setTimeout(function() { input.classList.remove('error'); }, 500);
+			}
+		}
+	});
+})();
+</script>
+
+</body>
+</html>

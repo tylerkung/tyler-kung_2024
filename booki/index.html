@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="/assets/img/favicon.ico">
+	<meta name="robots" content="noindex, nofollow" />
+	<meta name="description" content="Booki Case Study — Tyler Kung" />
+	<link rel="stylesheet" href="/css/styles.css" />
+	<title>Booki: Be The House — Tyler Kung</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<style>
+
+		/* Disable noise overlay so backdrop-filter works */
+		body:after {
+			display: none !important;
+		}
+
+		/* Section boxes */
+		.case-study-wrapper .section-box {
+			position: relative;
+			margin-bottom: 24px;
+			padding: 48px 40px 40px;
+			height: auto !important;
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+		}
+		@media (max-width: 767px) {
+			.case-study-wrapper .section-box { padding: 48px 20px 32px; }
+		}
+		.case-study-wrapper .section-box .tag {
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+		}
+
+		/* ===== HEADER LOGO SWAP ===== */
+		.header-row .box-logo .logo-booki {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			border-radius: 8px;
+			object-fit: cover;
+			transition: opacity 0.2s ease;
+			z-index: 3;
+		}
+		.header-row .box-logo:hover .logo-booki {
+			opacity: 0;
+		}
+
+		/* ===== HERO SPLASH ===== */
+		.hero-splash {
+			text-align: center;
+			padding: 80px 0 64px;
+			margin-bottom: 24px;
+			background: radial-gradient(ellipse at center, rgba(33, 33, 33, 1) 0%, rgba(33, 33, 33, 0.95) 30%, rgba(33, 33, 33, 0.7) 50%, transparent 75%);
+		}
+		.hero-splash .app-icon {
+			width: 96px;
+			border-radius: 22px;
+			margin-bottom: 24px;
+		}
+		.hero-splash .hero-title {
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+			font-size: 3em;
+			font-weight: 600;
+			letter-spacing: -1px;
+			line-height: 1.1;
+			margin-bottom: 16px;
+		}
+		@media (max-width: 767px) {
+			.hero-splash .hero-title { font-size: 2em; }
+			.hero-splash { padding: 48px 0 40px; }
+		}
+		.hero-splash .hero-subtitle {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			line-height: 1.7;
+			max-width: 560px;
+			margin: 0 auto 48px;
+		}
+		.hero-splash .hero-phones {
+			display: flex;
+			justify-content: center;
+			gap: 24px;
+			align-items: flex-end;
+		}
+		.hero-splash .hero-phones .phone {
+			flex: 0 1 240px;
+			max-width: 240px;
+		}
+		.hero-splash .hero-phones .phone:first-child {
+			transform: rotate(-4deg);
+		}
+		.hero-splash .hero-phones .phone:last-child {
+			transform: rotate(4deg);
+		}
+		.hero-splash .hero-phones .phone img {
+			width: 100%;
+			border-radius: 16px;
+			box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+		}
+		@media (max-width: 767px) {
+			.hero-splash .hero-phones .phone {
+				flex: 0 1 160px;
+				max-width: 160px;
+			}
+		}
+
+		/* ===== PASSWORD GATE ===== */
+		.gate {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 10000;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			background-color: #212121;
+			transition: opacity 0.5s ease, visibility 0.5s ease;
+		}
+		.gate.unlocked {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
+		.gate-box {
+			text-align: center;
+			max-width: 400px;
+			padding: 48px 40px;
+			border-radius: 8px;
+			background-color: rgba(33, 33, 33, 0.6);
+			backdrop-filter: blur(8px);
+			-webkit-backdrop-filter: blur(8px);
+			outline: 2px solid #BFEAFC;
+		}
+		.gate-box h2 {
+			margin-top: 0;
+			font-size: 1.4em;
+		}
+		.gate-box p {
+			font-size: 0.75em;
+			opacity: 0.6;
+			margin-bottom: 24px;
+		}
+		.gate-input {
+			width: 100%;
+			padding: 12px 16px;
+			border: 2px solid rgba(191, 234, 252, 0.3);
+			border-radius: 8px;
+			background: rgba(10, 10, 18, 0.6);
+			color: #BFEAFC;
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+			font-size: 1em;
+			font-weight: 300;
+			letter-spacing: 2px;
+			text-align: center;
+			outline: none;
+			transition: border-color 0.3s ease, box-shadow 0.3s ease;
+		}
+		.gate-input:focus {
+			border-color: #BFEAFC;
+			box-shadow: 0 0 16px rgba(191, 234, 252, 0.15);
+		}
+		.gate-input.error {
+			border-color: #FF6B6B;
+			animation: shake 0.4s ease;
+		}
+		@keyframes shake {
+			0%, 100% { transform: translateX(0); }
+			25% { transform: translateX(-8px); }
+			50% { transform: translateX(8px); }
+			75% { transform: translateX(-4px); }
+		}
+
+		/* ===== CASE STUDY LAYOUT ===== */
+		.case-study-wrapper {
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 64px 24px 80px;
+			align-self: flex-start;
+		}
+		@media (min-width: 968px) {
+			.case-study-wrapper { padding: 80px 32px 120px; }
+		}
+		.section-box .hero-title {
+			font-size: 2.4em;
+			font-weight: 600;
+			letter-spacing: -1px;
+			line-height: 1.2;
+			margin-bottom: 8px;
+		}
+		@media (max-width: 767px) {
+			.section-box .hero-title { font-size: 1.6em; }
+		}
+		.section-box .hero-subtitle {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			line-height: 1.7;
+			margin-bottom: 48px;
+		}
+		.section-box hr {
+			border: none;
+			border-top: 1px solid rgba(191, 234, 252, 0.15);
+			margin: 48px 0;
+		}
+		.section-box h2 {
+			font-size: 1.6em;
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+		@media (max-width: 767px) {
+			.section-box h2 { font-size: 1.3em; }
+		}
+		.section-box h3 {
+			font-size: 1.1em;
+			margin-top: 32px;
+			margin-bottom: 8px;
+			color: #E9DAA1;
+		}
+		.section-box h4 {
+			font-family: "Tomorrow", Helvetica, Arial, sans-serif;
+			font-size: 0.85em;
+			font-weight: 500;
+			margin-top: 24px;
+			margin-bottom: 8px;
+			color: rgba(191, 234, 252, 0.7);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+		.section-box p {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			line-height: 1.8;
+			margin-bottom: 16px;
+		}
+		.section-box ul {
+			padding-left: 20px;
+			margin-bottom: 16px;
+		}
+		.section-box li {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			font-size: 0.75em;
+			font-weight: 400;
+			color: #BFEAFC;
+			line-height: 1.8;
+			margin-bottom: 8px;
+		}
+		.section-box li strong {
+			color: #E9DAA1;
+			font-weight: 500;
+		}
+		.section-box .stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+			gap: 16px;
+			margin: 24px 0;
+		}
+		.section-box .stat-card {
+			padding: 20px;
+			border-radius: 8px;
+			background: rgba(33, 33, 33, 0.4);
+			backdrop-filter: blur(4px);
+			-webkit-backdrop-filter: blur(4px);
+			outline: 1px solid rgba(191, 234, 252, 0.2);
+			text-align: center;
+		}
+		.section-box .stat-value {
+			font-size: 1.4em;
+			font-weight: 600;
+			color: #E9DAA1;
+			display: block;
+			margin-bottom: 4px;
+		}
+		.section-box .stat-label {
+			font-size: 0.65em;
+			font-weight: 300;
+		}
+		.section-box table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 16px 0 24px;
+			font-size: 0.8em;
+		}
+		.section-box th {
+			text-align: left;
+			padding: 10px 12px;
+			border-bottom: 2px solid rgba(191, 234, 252, 0.2);
+			font-weight: 500;
+			font-size: 0.85em;
+			color: #E9DAA1;
+		}
+		.section-box td {
+			font-family: "Inter", Helvetica, Arial, sans-serif;
+			padding: 10px 12px;
+			border-bottom: 1px solid rgba(191, 234, 252, 0.08);
+			font-weight: 400;
+		}
+		.section-box .callout {
+			border-left: 3px solid #E9DAA1;
+			padding: 16px 20px;
+			margin: 24px 0;
+			background: rgba(233, 218, 161, 0.05);
+			border-radius: 0 8px 8px 0;
+		}
+		.section-box .callout p {
+			margin-bottom: 0;
+			font-style: italic;
+		}
+		.section-box .section-number {
+			font-family: "Press Start 2P", Helvetica, Arial, sans-serif;
+			font-size: 0.55em;
+			color: rgba(191, 234, 252, 0.3);
+			display: block;
+			margin-bottom: 8px;
+		}
+		/* ===== IMAGE LAYOUTS ===== */
+		.case-study .hero-img {
+			text-align: center;
+			margin: 32px 0 40px;
+		}
+		.case-study .hero-img img {
+			max-width: 100%;
+			border-radius: 12px;
+		}
+		.section-box .app-icon {
+			width: 80px;
+			border-radius: 18px;
+			margin-bottom: 16px;
+		}
+		.section-box .phone-pair {
+			display: flex;
+			gap: 24px;
+			justify-content: center;
+			align-items: flex-start;
+			margin: 32px 0 40px;
+		}
+		@media (max-width: 767px) {
+			.section-box .phone-pair {
+				flex-direction: column;
+				align-items: center;
+				gap: 16px;
+			}
+		}
+		.section-box .phone-pair .phone {
+			flex: 0 1 280px;
+			max-width: 280px;
+		}
+		.section-box .phone-pair .phone img {
+			width: 100%;
+			border-radius: 12px;
+			outline: 1px solid rgba(191, 234, 252, 0.1);
+		}
+		.section-box .phone-pair .phone-label {
+			text-align: center;
+			font-size: 0.65em;
+			font-weight: 400;
+			color: #E9DAA1;
+			margin-top: 8px;
+		}
+		/* ===== PROTOTYPE IFRAME ===== */
+		.section-box .prototype-section {
+			margin: 40px 0 48px;
+			text-align: center;
+		}
+		.section-box .prototype-section h3 {
+			margin-bottom: 16px;
+		}
+		.section-box .prototype-section p {
+			font-size: 0.7em;
+			margin-bottom: 24px;
+		}
+		.section-box .prototype-frame {
+			width: 100%;
+			max-width: 430px;
+			height: 900px;
+			border: none;
+			border-radius: 54px;
+			margin: 0 auto;
+			display: block;
+			overflow: hidden;
+		}
+		@media (max-width: 767px) {
+			.section-box .prototype-frame {
+				max-width: 100%;
+				height: 700px;
+				border-radius: 32px;
+			}
+		}
+		.section-box .footer-sig {
+			text-align: center;
+			font-size: 0.7em;
+			margin-top: 64px;
+		}
+	</style>
+</head>
+
+<body>
+
+<!-- CASE STUDY CONTENT -->
+<div class="wrapper">
+	<div class="main">
+<div class="container">
+	<div class="row header-row">
+		<div class="top-header-logo">
+			<div class="box-logo">
+				<a href="/">
+					<img src="/booki/assets/booki-app-icon.png" alt="Booki" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 8px; object-fit: cover; z-index: 3; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0'" onmouseout="this.style.opacity='1'" />
+					<svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M44.5123 70.7059C48.2247 69.541 52.0809 68.172 56.0001 66.6093C57.968 65.8247 59.8909 65.0156 61.7603 64.1882C62.6308 63.8028 63.4898 63.413 64.3363 63.0202C70.0572 60.3661 75.2099 57.5574 79.532 54.7792C81.0851 53.7808 82.5306 52.7862 83.8571 51.8044C87.2133 49.3205 89.8999 46.8483 91.6096 44.5234C93.2456 42.2988 94.3755 39.6592 93.383 37.17C92.3905 34.6808 89.7543 33.5428 87.0366 33.0541C84.1962 32.5434 80.5457 32.5979 76.4011 33.1047C72.0912 33.6317 67.1212 34.6641 61.7603 36.1634V29.728H44.5123V42.1303C43.3866 42.5915 42.2767 43.0603 41.1842 43.5357V41.712H37.3202V31.352H26.6802L20.4082 41.712H18.6162V48.824H20.1842V54.8773C19.4756 55.3651 18.7945 55.8509 18.1422 56.3337C14.786 58.8176 12.0994 61.2898 10.3897 63.6147C8.75371 65.8393 7.62377 68.4789 8.61627 70.9681C9.60878 73.4574 12.2449 74.5954 14.9627 75.084C17.8031 75.5947 21.4536 75.5402 25.5982 75.0334C31.0332 74.3688 37.5177 72.9006 44.5123 70.7059ZM76.3004 52.0904C78.1944 50.9092 79.9273 49.7365 81.4775 48.5892C84.6842 46.216 87.0146 44.02 88.3872 42.1536C89.8335 40.1869 89.8511 39.112 89.6675 38.6514C89.4838 38.1909 88.7315 37.423 86.3287 36.991C84.0486 36.581 80.8465 36.591 76.8866 37.0752C72.5179 37.6093 67.3679 38.7025 61.7603 40.3218V47.816L67.5843 41.712H83.0963L74.5283 50.616L76.3004 52.0904ZM44.5123 46.4618V66.508C43.6748 66.7786 42.8451 67.0386 42.0242 67.2877V63.888H37.3202V49.7048C37.9321 49.4097 38.552 49.116 39.1794 48.824H41.1842V47.9083C42.2735 47.4201 43.3834 46.9374 44.5123 46.4618ZM20.1842 59.8005V65.736L26.4323 70.888C25.985 70.9518 25.545 71.0101 25.1127 71.063C21.1528 71.5472 17.9507 71.5571 15.6705 71.1472C13.2678 70.7151 12.5155 69.9473 12.3318 69.4867C12.1482 69.0261 12.1658 67.9513 13.6121 65.9845C14.936 64.1842 17.1512 62.0773 20.1842 59.8005Z" fill="#BFEAFC"/>
+					<path d="M64.3363 71V69.9787C64.7317 69.5591 65.1223 69.1339 65.5108 68.7111C67.3547 66.7037 69.1516 64.7477 71.2025 63.6833C73.7514 62.3604 77.8996 60.2074 81.5283 58.0639V71H64.3363Z" fill="#BFEAFC"/>
+					</svg>
+				</a>
+			</div>
+		</div>
+		<div class="marquee-wrapper">
+			<div class="marquee-container">
+				<div class="marquee">
+					<div class="item">BE THE HOUSE</div>
+					<div class="item">CASE STUDY</div>
+					<div class="item">iOS + WEB</div>
+					<div class="item">SWIFT + SUPABASE</div>
+					<div class="item">DESIGNED & BUILT BY TYLER</div>
+				</div>
+				<div class="marquee" aria-hidden="true">
+					<div class="item">BE THE HOUSE</div>
+					<div class="item">CASE STUDY</div>
+					<div class="item">iOS + WEB</div>
+					<div class="item">SWIFT + SUPABASE</div>
+					<div class="item">DESIGNED & BUILT BY TYLER</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="case-study-wrapper">
+
+	<!-- HERO SPLASH -->
+	<div class="hero-splash">
+		<img src="/booki/assets/booki-app-icon.png" alt="Booki" class="app-icon" />
+		<h1 class="hero-title">Booki: Be The House</h1>
+		<p class="hero-subtitle">A case study in designing, building, and shipping a full-stack sports betting platform as a solo product designer.</p>
+		<a href="https://bookisports.com" target="_blank" style="font-size: 0.75em; display: inline-block; margin-bottom: 8px;">visit bookisports.com &rarr;</a>
+		<br>
+		<a href="#prototype" style="font-size: 0.75em; display: inline-block; margin-bottom: 48px;">jump to interactive prototype &darr;</a>
+		<div class="hero-phones">
+			<div class="phone">
+				<img src="/booki/assets/mock-1.png" alt="Organizer Dashboard" />
+			</div>
+			<div class="phone">
+				<img src="/booki/assets/mock-2.png" alt="Member Games View" />
+			</div>
+		</div>
+	</div>
+
+	<!-- 01 THE PROBLEM -->
+	<div class="box section-box">
+		<div class="tag">01 // problem</div>
+		<div style="padding-top: 48px;">
+			<h2>The House Always...</h2>
+		</div>
+		<p>Prediction markets are booming and sports betting is mainstream, and every friend group already has a little action on the game. The natural next question: why not run the book yourself?</p>
+		<p>But the tools that exist today weren't built for you. Pay-per-head platforms are archaic, clunky, and designed for offshore operations, not someone organizing picks for ten friends. They charge $5-10 per player per week, which means even a small 20-person group is burning $400-800/month. There was nothing modern, nothing affordable at small scale, nothing that looked like it belonged on your phone in 2026.</p>
+		<div class="callout">
+			<p>I saw a gap: a trust-first platform for private sports betting groups: simple to set up, beautiful to use, and priced as flat-fee SaaS instead of per-head extraction.</p>
+		</div>
+	</div>
+
+	<!-- 02 MY ROLE -->
+	<div class="box section-box">
+		<div class="tag">02 // role</div>
+		<div style="padding-top: 48px;">
+			<h2>My Role</h2>
+		</div>
+		<p>Everything. Product strategy, UX research, interaction design, visual design, design system, frontend engineering (SwiftUI + web), backend architecture (Supabase Edge Functions, PostgreSQL), marketing site, SEO, content, and go-to-market.</p>
+		<div class="stats-grid">
+			<div class="stat-card">
+				<span class="stat-value">~2 mo</span>
+				<span class="stat-label">Timeline</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">789</span>
+				<span class="stat-label">Commits</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">43K+</span>
+				<span class="stat-label">Lines of Code</span>
+			</div>
+		</div>
+		<p><strong>Stack:</strong> iOS (Swift 6 / SwiftUI / SwiftData), Web (Alpine.js SPA), Backend (Supabase / PostgreSQL / Deno Edge Functions), Payments (Stripe + Apple IAP), Email (Resend).</p>
+	</div>
+
+	<!-- 03 STRATEGIC FRAMING -->
+	<div class="box section-box">
+		<div class="tag">03 // strategy</div>
+		<div style="padding-top: 48px;">
+			<h2>Strategic Framing</h2>
+		</div>
+
+		<h3>Two-Sided Product, One Interface</h3>
+		<p>Booki serves two users with fundamentally different mental models:</p>
+		<ul>
+			<li><strong>Organizers</strong> think in risk, exposure, and settlement cycles. Their job is managing a group.</li>
+			<li><strong>Members</strong> think in odds, picks, and balances. Their job is placing bets and knowing where they stand.</li>
+		</ul>
+		<p>Rather than building two separate apps, I designed a single product with role-gated experiences: shared data model, divergent UIs. This kept the codebase manageable while letting each side feel purpose-built.</p>
+		<div class="phone-pair">
+			<div class="phone">
+				<img src="/booki/assets/for-bookies-2.png" alt="Organizer View" />
+				<div class="phone-label">Organizer: Members & Balances</div>
+			</div>
+			<div class="phone">
+				<img src="/booki/assets/for-players.png" alt="Member View" />
+				<div class="phone-label">Member: Games & Odds</div>
+			</div>
+		</div>
+
+		<h3>Trust as Core Product Value</h3>
+		<p>In betting, disputes are inevitable. The #1 feature isn't odds or grading; it's <strong>proof</strong>. Every design decision laddered up to a trust thesis:</p>
+		<ul>
+			<li><strong>Tamper-evident ledger</strong> — financial entries are hash-chained, making retroactive edits cryptographically detectable. This isn't just backend architecture; it's a product differentiator I surface in marketing copy.</li>
+			<li><strong>Server-authoritative operations</strong> — all critical actions (submitting, grading, settling) execute on the server with idempotency protection. The client can't fabricate results.</li>
+			<li><strong>Full audit trail</strong> — every bet, grade, settlement, and balance adjustment is logged with timestamps and actor IDs. Both sides can verify history.</li>
+		</ul>
+		<div class="callout">
+			<p>This wasn't over-engineering. It was the insight that in a trust-deficit domain, the product <em>is</em> the audit trail.</p>
+		</div>
+
+		<h3>Mobile-First as Strategy</h3>
+		<p>The thesis: meet the user where they already are: their phone, mid-game, on the couch with friends.</p>
+		<p>The younger demographic I was targeting doesn't sit at a desktop to manage bets. They're texting odds in group chats, checking scores between plays, settling up over Venmo. An iOS app wasn't just a platform choice; it was a UX bet that the entire experience needed to feel as fast and casual as sending a text.</p>
+		<p>That conviction shaped everything downstream:</p>
+		<ul>
+			<li><strong>Offline-first architecture</strong> — SwiftData stores everything locally so the app feels instant. No loading spinners between screens. This matters when someone is placing a pick 30 seconds before tip-off.</li>
+<li><strong>Auto-pilot as the default</strong> — a younger casual group doesn't want to manually approve every bet. The system should just work. This was a product decision that only makes sense when you're designing for the low-attention, high-frequency use case of a phone.</li>
+			<li><strong>The eventual pivot</strong> — after building the full native experience, I discovered the download was the biggest friction point. The web-first repositioning didn't invalidate the iOS strategy; it validated that the UX patterns I prototyped natively (bet slip persistence, sport tab browsing, quick-pick odds buttons) were the right interactions. I just needed to remove the App Store gate before people could experience them.</li>
+		</ul>
+		<p>The iOS app was the proving ground. The web dashboard was the distribution play. The design language traveled between both because it was built from a system, not a platform.</p>
+	</div>
+
+	<!-- 04 DESIGN SYSTEM -->
+	<div class="box section-box">
+		<div class="tag">04 // design system</div>
+		<div style="padding-top: 48px;">
+			<h2>Design System</h2>
+		</div>
+		<p>I built a comprehensive design system from scratch, documented in a dedicated spec and implemented in a centralized <code>Theme.swift</code> file with reusable SwiftUI view modifiers. The governing philosophy: remove elements until the design breaks, then add back one thing.</p>
+
+		<h3>Color</h3>
+		<p>Dark-first with a sports-broadcast aesthetic. Electric cyan (<code>#00F5D4</code>) is the signature accent for actions and wins. Semantic colors are strict: cyan for wins, coral red for losses, warm orange for pending, never decorative. Gradients (cyan-to-purple) are reserved for primary CTA buttons only.</p>
+
+		<table>
+			<thead>
+				<tr><th>Token</th><th>Value</th><th>Purpose</th></tr>
+			</thead>
+			<tbody>
+				<tr><td>Accent</td><td><code>#00F5D4</code></td><td>Actions, wins, focus states</td></tr>
+				<tr><td>Secondary</td><td><code>#9D4EDD</code></td><td>Gradients, secondary emphasis</td></tr>
+				<tr><td>Danger</td><td><code>#FF6B6B</code></td><td>Losses, errors, destructive</td></tr>
+				<tr><td>Warning</td><td><code>#FFA94D</code></td><td>Pending, attention needed</td></tr>
+				<tr><td>Background</td><td><code>#0A0A12</code></td><td>App base</td></tr>
+				<tr><td>Card</td><td><code>#14141F</code></td><td>Elevated surfaces</td></tr>
+			</tbody>
+		</table>
+
+		<h3>Typography &amp; Numbers</h3>
+		<p>SF Pro system font, three weights max per screen. Monospaced digits (<code>.monospacedDigit()</code>) everywhere; currency, odds, and scores align cleanly. Type scale runs from 34pt display (hero numbers) down to 11pt micro (chip labels).</p>
+
+		<h3>Spacing, Radius &amp; Motion</h3>
+		<p>4pt base grid with values from 4pt to 48pt. Generous corner radii (12-16pt) for a softer feel than traditional betting UIs. Elevation through color, not shadow: featured cards get a subtle accent glow at 15% opacity instead of drop shadows. Motion uses critically damped springs (0.7-0.8 damping), all honoring <code>prefers-reduced-motion</code>.</p>
+
+		<h3>Components</h3>
+		<p>Standardized as reusable view modifiers: <code>.cardStyle()</code>, <code>.elevatedCardStyle()</code>, <code>.glowingBorder()</code>, <code>.gradientText()</code>. Every card, button, input, badge, and list row pulls from the same token set, consistent across 67 views without any one-off styling.</p>
+	</div>
+
+	<!-- 05 KEY DESIGN DECISIONS -->
+	<div class="box section-box">
+		<div class="tag">05 // decisions</div>
+		<div style="padding-top: 48px;">
+			<h2>Key Design Decisions</h2>
+		</div>
+
+		<h3>1. Auto-Pilot as Default</h3>
+		<p>Most betting platforms start with manual controls and let users automate later. I inverted this.</p>
+		<p>New organizers get a fully automated system: bets auto-accept, games auto-grade when final scores come in, settlements auto-calculate. Manual approval and manual grading are opt-in toggles buried in settings.</p>
+		<p><strong>Why:</strong> The target user isn't a professional bookie; they're someone organizing bets for friends. They don't <em>want</em> to manually approve every bet. The first experience should feel effortless, with power controls available when needed.</p>
+		<p>This single decision shaped the entire backend architecture. Auto-grading required sport-aware logic (moneyline, spread, totals each grade differently). Auto-settlement required atomic database transactions. Live score polling required smart API call budgeting.</p>
+
+		<h3>2. Standalone-First Onboarding</h3>
+		<p>Early versions required users to choose "Organizer" or "Member" at signup. Conversion data showed this fork paralyzed new users who just wanted to explore.</p>
+		<p>I redesigned onboarding to drop everyone into a standalone player experience with a synthetic $10K credit line and 25 open bet limit. No group needed. Just browse games, place picks, and see how it works.</p>
+		<p>The "Become an Organizer" upsell lives in the Account menu: one tap creates a bookie record, and the UI transforms. The upgrade path follows exploration, not precedes it.</p>
+
+		<h3>3. Attention Tags for Organizer Intelligence</h3>
+		<p>Organizer dashboards in competing products show raw numbers. I designed an <strong>attention tag system</strong> that translates data into actionable signals:</p>
+		<ul>
+			<li><strong>Picks Pending</strong> — bets awaiting manual approval</li>
+			<li><strong>Overdue</strong> — balance outstanding past threshold</li>
+			<li><strong>On Heater / Cold Streak</strong> — recent win/loss patterns</li>
+			<li><strong>Whale</strong> — disproportionately large stakes</li>
+			<li><strong>Parlay Demon</strong> — heavy multi-pick activity</li>
+		</ul>
+		<p>Tags are tappable with explainer modals so organizers understand <em>why</em> a member is flagged. The Members list is filterable by tag, turning a flat list into a prioritized action queue.</p>
+
+		<h3>4. Bidirectional Stake Entry</h3>
+		<p>Placing a bet involves two mental models: "I want to risk $50" and "I want to win $100." Most platforms pick one. I designed a bidirectional input where both fields are live-editable: entering a stake calculates the potential return, and entering a desired return back-calculates the required stake.</p>
+		<p>The challenge was preventing feedback loops. Both fields update each other in real-time, so without careful state management, editing one triggers a write to the other, which triggers a write back. I built a focus tracking system that knows which field the user is actively typing in and only calculates in one direction at a time. A custom numeric keypad keeps the bet slip compact; the system keyboard would eat half the screen and push the slip out of view.</p>
+
+		<h3>5. Two-Sided Data Perspective</h3>
+		<p>The same bet, the same balance, the same settlement looks different depending on who's looking at it. An organizer sees "+$50 won from Tyler" in green. Tyler sees "-$50 lost to the house" in red. Same transaction, opposite emotional context.</p>
+		<p>This isn't just flipping a sign; it's two mental models of the same data. Color, direction, and language all shift based on role. The organizer's dashboard frames everything as risk and exposure. The member's view frames everything as picks and potential return. Designing this required thinking about every data point from both perspectives simultaneously, ensuring the shared backend produces role-appropriate presentations without duplicating the underlying model.</p>
+
+	</div>
+
+	<!-- 06 INFORMATION ARCHITECTURE -->
+	<div class="box section-box">
+		<div class="tag">06 // architecture</div>
+		<div style="padding-top: 48px;">
+			<h2>Information Architecture</h2>
+		</div>
+
+		<h3>Organizer: 5-Tab Structure</h3>
+		<table>
+			<thead>
+				<tr><th>Tab</th><th>Purpose</th><th>Key Pattern</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><strong>Dashboard</strong></td><td>PnL trends, risk watchlist, exposure metrics</td><td>Time-selector filters headline number</td></tr>
+				<tr><td><strong>Picks</strong></td><td>All bets with status/type/member filters</td><td>Card-based detail view</td></tr>
+				<tr><td><strong>Members</strong></td><td>Roster with attention tags and capacity</td><td>Inline search + 6 smart filter chips</td></tr>
+				<tr><td><strong>Events</strong></td><td>Sport categories as cards, league sub-tabs</td><td>Shared events architecture</td></tr>
+				<tr><td><strong>Settings</strong></td><td>Profile, subscription, pick management</td><td>Menu page with detail views</td></tr>
+			</tbody>
+		</table>
+
+		<h3>Member: 4-Tab Structure</h3>
+		<table>
+			<thead>
+				<tr><th>Tab</th><th>Purpose</th><th>Key Pattern</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><strong>Games</strong></td><td>Browse events with sport tabs</td><td>Horizontal sport scroller, compact cards</td></tr>
+				<tr><td><strong>Search</strong></td><td>Full-text team search by sport/league</td><td>Dedicated tab for discoverability</td></tr>
+				<tr><td><strong>Track</strong></td><td>Bet history with ticket grouping</td><td>Open/graded toggle, scores inline</td></tr>
+				<tr><td><strong>Account</strong></td><td>Balance, activity, profile, preferences</td><td>Card-based layout with stats</td></tr>
+			</tbody>
+		</table>
+		<p>The asymmetry is intentional. Organizers need more surface area (5 tabs) because their tasks are more varied. Members need speed (4 tabs) because their primary action is singular: find a game, place a pick.</p>
+		<div class="phone-pair">
+			<div class="phone">
+				<img src="/booki/assets/for-bookies.png" alt="Organizer Dashboard" />
+				<div class="phone-label">Organizer: PnL Dashboard</div>
+			</div>
+			<div class="phone">
+				<img src="/booki/assets/for-players-2.png" alt="Member Games" />
+				<div class="phone-label">Member: Browse & Pick</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 07 PLATFORM PARITY -->
+	<div class="box section-box">
+		<div class="tag">07 // platform</div>
+		<div style="padding-top: 48px;">
+			<h2>Platform Parity: iOS + Web</h2>
+		</div>
+		<p>The web dashboard provides feature parity for organizers who prefer desktop. Key differences are intentional, not compromises:</p>
+		<ul>
+			<li><strong>Bet slip:</strong> Fixed sidebar on desktop (340px), floating sheet on mobile, each native to its input paradigm.</li>
+			<li><strong>Member detail:</strong> Inline grid editing on web, modal sheets on iOS.</li>
+			<li><strong>Navigation:</strong> Hash-based routing with responsive sidebar (collapses to hamburger on mobile).</li>
+		</ul>
+		<p>Both clients share the same backend, Edge Functions, and real-time subscriptions. Data changes on one platform appear on the other within seconds.</p>
+		<div style="margin-top: 32px;">
+			<img src="/booki/assets/booki-web-dashboard.png" alt="Booki Web Dashboard" style="width: 100%; border-radius: 12px; outline: 1px solid rgba(191, 234, 252, 0.1);" />
+			<p style="text-align: center; font-size: 0.65em; color: #E9DAA1; margin-top: 8px;">Organizer Web Dashboard</p>
+		</div>
+	</div>
+
+	<!-- 08 MARKETING -->
+	<div class="box section-box">
+		<div class="tag">08 // growth</div>
+		<div style="padding-top: 48px;">
+			<h2>Marketing &amp; Growth</h2>
+		</div>
+
+		<h3>Landing Site</h3>
+		<p>8-section homepage with scroll-reveal animations, dedicated features page with mixed layouts, and a comparison section that positions Booki against traditional PPH pricing.</p>
+
+		<h3>SEO &amp; Content</h3>
+		<ul>
+			<li>Structured data (JSON-LD), Open Graph tags, and sitemap on all pages.</li>
+			<li>3 bottom-funnel SEO landing pages targeting search intent ("PPH alternative," "bookie software," "ledger software").</li>
+			<li>Blog with 8+ articles, staggered publish dates, FAQPage schema on comparison posts.</li>
+		</ul>
+
+		<h3>Web-First Pivot</h3>
+		<p>Originally positioned as an iOS app with a web companion. I pivoted to web-first messaging, replacing App Store CTAs with "Get Started Free" links to the web dashboard. This removed the friction of requiring a download before experiencing the product.</p>
+	</div>
+
+	<!-- 09 TECHNICAL COMPLEXITY -->
+	<div class="box section-box">
+		<div class="tag">09 // technical</div>
+		<div style="padding-top: 48px;">
+			<h2>Navigating Technical Complexity as a Designer</h2>
+		</div>
+		<p>This section isn't about showing off code; it's about demonstrating that I understand the systems I'm designing for, and that my design decisions account for real engineering constraints.</p>
+		<ul>
+			<li><strong>26 Edge Functions</strong> handling everything from bet submission to Stripe webhooks to Apple IAP verification. Each function enforces its own authorization, idempotency, and audit logging.</li>
+			<li><strong>27 database migrations</strong> evolving the schema from a simple bet tracker to a multi-tenant platform with hash-chain ledger integrity, atomic settlement transactions, and row-level security policies.</li>
+			<li><strong>Smart API budgeting</strong> — the live scores system estimates game durations by sport and only polls the Odds API when games are in their finishing window. (Answer: 5 minutes during the last 30 minutes of a game.)</li>
+			<li><strong>Offline-first architecture</strong> — local storage for everything, cloud sync when online. The app feels instant, and I designed loading states around sync completion rather than network latency.</li>
+		</ul>
+	</div>
+
+	<!-- INTERACTIVE PROTOTYPE -->
+	<div class="box section-box" id="prototype">
+		<div class="tag">10 // prototype</div>
+		<div class="prototype-section" style="padding-top: 48px;">
+			<h3>Interactive Prototype</h3>
+			<p>Tap through the app below</p>
+			<div style="display: flex; justify-content: center; gap: 0; margin-bottom: 24px;">
+				<button id="proto-member-btn" onclick="switchProto('member')" style="padding: 8px 24px; font-family: 'Tomorrow', sans-serif; font-size: 0.7em; font-weight: 500; border: 2px solid #BFEAFC; background: #BFEAFC; color: #212121; border-radius: 8px 0 0 8px; cursor: pointer; transition: all 0.2s ease;">Member</button>
+				<button id="proto-org-btn" onclick="switchProto('organizer')" style="padding: 8px 24px; font-family: 'Tomorrow', sans-serif; font-size: 0.7em; font-weight: 500; border: 2px solid #BFEAFC; background: transparent; color: #BFEAFC; border-radius: 0 8px 8px 0; cursor: pointer; transition: all 0.2s ease;">Organizer</button>
+			</div>
+			<iframe id="proto-member" src="/booki/prototype.html" class="prototype-frame" loading="lazy" allowfullscreen></iframe>
+			<iframe id="proto-org" src="/booki/prototype-organizer.html" class="prototype-frame" loading="lazy" allowfullscreen style="display: none;"></iframe>
+		</div>
+	</div>
+	<script>
+	function switchProto(view) {
+		var memberFrame = document.getElementById('proto-member');
+		var orgFrame = document.getElementById('proto-org');
+		var memberBtn = document.getElementById('proto-member-btn');
+		var orgBtn = document.getElementById('proto-org-btn');
+		if (view === 'member') {
+			memberFrame.style.display = 'block';
+			orgFrame.style.display = 'none';
+			memberBtn.style.background = '#BFEAFC';
+			memberBtn.style.color = '#212121';
+			orgBtn.style.background = 'transparent';
+			orgBtn.style.color = '#BFEAFC';
+		} else {
+			memberFrame.style.display = 'none';
+			orgFrame.style.display = 'block';
+			orgBtn.style.background = '#BFEAFC';
+			orgBtn.style.color = '#212121';
+			memberBtn.style.background = 'transparent';
+			memberBtn.style.color = '#BFEAFC';
+		}
+	}
+	</script>
+
+	<!-- 10 OUTCOMES -->
+	<div class="box section-box">
+		<div class="tag">11 // outcomes</div>
+		<div style="padding-top: 48px;">
+			<h2>Outcomes &amp; Reflection</h2>
+		</div>
+
+		<div class="stats-grid">
+			<div class="stat-card">
+				<span class="stat-value">~2 mo</span>
+				<span class="stat-label">Timeline</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">789</span>
+				<span class="stat-label">Commits</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">43K+</span>
+				<span class="stat-label">Lines of Code</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">67</span>
+				<span class="stat-label">iOS Views</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">26</span>
+				<span class="stat-label">Edge Functions</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">27</span>
+				<span class="stat-label">DB Migrations</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">16+</span>
+				<span class="stat-label">Landing Pages</span>
+			</div>
+			<div class="stat-card">
+				<span class="stat-value">142</span>
+				<span class="stat-label">Stress Test Assertions</span>
+			</div>
+		</div>
+
+		<h3>What I'd Do Differently</h3>
+		<ul>
+			<li><strong>Start with the web dashboard, not iOS.</strong> The web-first pivot was the right call, but I'd have reached it faster by shipping the web experience first and treating native as the upgrade.</li>
+			<li><strong>Research App Store restrictions earlier.</strong> I was excited to build a native iOS app, and my initial research suggested it was possible. But Apple recently tightened restrictions on solo developers publishing gambling-adjacent apps, which put most of the iOS work on hold. A deeper dive into App Store policy before committing to native would have saved significant time and reframed the project scope sooner.</li>
+			<li><strong>Validate before building.</strong> I was excited to build something I thought my friends and I would use, but the target user turned out to be a tight niche. I spent too much time on features and not enough getting the product into real hands early. A leaner MVP and earlier distribution thinking would have surfaced that sooner. The process was a valuable learning experience, but next time I'd prioritize user validation over feature depth.</li>
+		</ul>
+
+		<h3>What This Demonstrates</h3>
+		<ul>
+			<li><strong>End-to-end product ownership</strong> — from market insight to information architecture to pixel-level UI to production backend to marketing site.</li>
+			<li><strong>Product-minded design</strong> — every design decision tied to a business thesis (trust, pricing as positioning, compliance as UX win).</li>
+			<li><strong>Systems thinking</strong> — designing across iOS, web, and server-side with consistent mental models and intentional platform divergence.</li>
+			<li><strong>Technical fluency</strong> — not just "familiar with code" but shipping production systems with real architectural tradeoffs.</li>
+			<li><strong>Constraint-driven creativity</strong> — App Store compliance language becoming a friendlier product voice; API rate limits becoming smart polling; pricing model becoming brand positioning.</li>
+		</ul>
+
+		<p class="footer-sig">Built by Tyler Kung. 2026.</p>
+	</div>
+
+	<div class="box section-box" style="padding-top: 64px; font-family: 'Tomorrow', Helvetica, Arial, sans-serif;">
+		<div class="tag">more work</div>
+		<div style="display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap;">
+			<a href="/chopped/" style="flex: 1; min-width: 200px; text-decoration: none; color: inherit; padding: 20px; border-radius: 8px; outline: 1px solid rgba(191, 234, 252, 0.2); transition: outline-color 0.2s ease;">
+				<span style="font-size: 0.7em; color: #E9DAA1; display: block; margin-bottom: 4px;">Sleeper</span>
+				<span style="font-size: 0.85em; font-weight: 500;">Chopped Leagues &rarr;</span>
+			</a>
+			<a href="/metadraft/" style="flex: 1; min-width: 200px; text-decoration: none; color: inherit; padding: 20px; border-radius: 8px; outline: 1px solid rgba(191, 234, 252, 0.2); transition: outline-color 0.2s ease;">
+				<span style="font-size: 0.7em; color: #E9DAA1; display: block; margin-bottom: 4px;">Side Project</span>
+				<span style="font-size: 0.85em; font-weight: 500;">MetaDraft &rarr;</span>
+			</a>
+		</div>
+	</div>
+
+	<div class="box section-box" style="text-align: center; padding-top: 64px; font-family: 'Tomorrow', Helvetica, Arial, sans-serif;">
+		<div class="tag">contact</div>
+		<p style="margin-bottom: 24px;">tylerbkung@gmail.com</p>
+		<div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-bottom: 24px;">
+			<a href="/tyler_kung_resume_2026.pdf" target="_blank" style="font-size: 0.75em;">resume</a>
+			<a href="https://www.linkedin.com/in/tyler-kung/" target="_blank"><img src="/assets/img/linkedin.svg" alt="LinkedIn" style="height: 24px; opacity: 0.8;"/></a>
+			<a href="https://github.com/tylerkung" target="_blank"><img src="/assets/img/github.svg" alt="GitHub" style="height: 24px; opacity: 0.8;"/></a>
+		</div>
+		<p style="font-size: 0.6em; opacity: 0.5; margin-bottom: 0;">Design + Code by Tyler Kung</p>
+	</div>
+
+</div>
+	</div>
+</div>
+
+
+</body>
+</html>

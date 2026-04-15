@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booki Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   RESET & BASE
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'IBM Plex Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ======================================== */
+:root {
+  /* Backgrounds */
+  --bg: #0A0A12;
+  --card-bg: #14141F;
+  --elevated-bg: #1E1E2D;
+
+  /* Accents */
+  --accent: #00F5D4;
+  --accent-secondary: #9D4EDD;
+  --accent-tertiary: #FF006E;
+  --gold: #FFE66D;
+
+  /* Semantic */
+  --danger: #FF6B6B;
+  --warning: #FFA94D;
+
+  /* Text */
+  --text-primary: #F8F8F8;
+  --text-secondary: #A8A8B8;
+  --text-muted: #6B6B7B;
+
+  /* UI */
+  --border: #2A2A3A;
+  --divider: #22222E;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+
+  /* Spacing */
+  --xs: 4px;
+  --sm: 8px;
+  --md: 12px;
+  --lg: 16px;
+  --xl: 24px;
+  --xxl: 32px;
+}
+
+/* ========================================
+   PHONE FRAME
+   ======================================== */
+.phone-frame {
+  width: 393px;
+  height: 852px;
+  background: var(--bg);
+  border-radius: 54px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 2px #333,
+    0 0 0 6px #1a1a1a,
+    0 0 0 8px #333,
+    0 50px 100px rgba(0,0,0,0.5);
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Status bar */
+.status-bar {
+  height: 54px;
+  padding: 14px 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--card-bg);
+}
+.status-bar .time {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.status-bar .icons {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.status-bar .icons svg { fill: var(--text-primary); }
+
+/* Dynamic island */
+.dynamic-island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 36px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+}
+
+/* Home indicator */
+.home-indicator {
+  height: 34px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding-bottom: 8px;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+.home-indicator-bar {
+  width: 134px;
+  height: 5px;
+  background: var(--text-secondary);
+  border-radius: 3px;
+  opacity: 0.4;
+}
+
+/* ========================================
+   APP HEADER
+   ======================================== */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px var(--lg) var(--md);
+  background: var(--card-bg);
+  border-bottom: 0.5px solid var(--divider);
+  flex-shrink: 0;
+}
+.app-header .logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+.app-header .title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--text-primary);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.app-header .balance {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+/* ========================================
+   SPORT TABS
+   ======================================== */
+.sport-tabs {
+  display: flex;
+  gap: var(--md);
+  padding: var(--md) var(--lg);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--divider);
+  flex-shrink: 0;
+}
+.sport-tabs::-webkit-scrollbar { display: none; }
+
+.sport-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--sm) var(--lg);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  outline: none;
+  flex-shrink: 0;
+}
+.sport-tab.active {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+.sport-tab:not(.active) {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+.sport-tab svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.sport-tab.active svg { fill: var(--bg); }
+.sport-tab:not(.active) svg { fill: var(--text-primary); }
+
+/* ========================================
+   GAMES LIST
+   ======================================== */
+.games-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+}
+.games-list::-webkit-scrollbar { display: none; }
+
+/* Section header (sticky) */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sm) var(--md);
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--divider);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.section-header .sport-league {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section-header .sport-league .dot {
+  color: var(--text-muted);
+}
+.section-header .sport-league .league {
+  color: var(--text-muted);
+}
+.section-header .market-labels {
+  display: flex;
+  gap: 4px;
+}
+.section-header .market-label {
+  width: 62px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Game row */
+.game-row {
+  padding: var(--sm) var(--md);
+  border-bottom: 0.5px solid var(--divider);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.game-row:nth-child(odd) {
+  background: var(--card-bg);
+}
+.game-row:nth-child(even) {
+  background: rgba(20, 20, 31, 0.6);
+}
+
+.game-time-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.game-time {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.live-badge {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 2px 6px;
+  background: rgba(0, 245, 212, 0.15);
+  border-radius: 999px;
+}
+.more-markets {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 8px;
+  background: var(--elevated-bg);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.more-markets svg {
+  width: 9px;
+  height: 9px;
+  fill: var(--text-muted);
+}
+
+/* Team row */
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+}
+.team-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--elevated-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.team-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Odds buttons */
+.odds-grid {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.odds-btn {
+  width: 62px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: var(--elevated-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+.odds-btn:active {
+  transform: scale(0.95);
+}
+.odds-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.odds-btn .line {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.odds-btn .odds {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+.odds-btn.moneyline .odds {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.odds-btn.selected .line {
+  color: var(--bg);
+}
+.odds-btn.selected .odds {
+  color: rgba(10, 10, 18, 0.7);
+}
+.odds-btn.moneyline.selected .odds {
+  color: var(--bg);
+}
+
+.odds-btn-empty {
+  width: 62px;
+  height: 44px;
+}
+
+/* ========================================
+   FLOATING BET SLIP BAR
+   ======================================== */
+.floating-bar {
+  position: absolute;
+  bottom: 100px;
+  left: var(--lg);
+  right: var(--lg);
+  display: flex;
+  align-items: center;
+  padding: var(--md) var(--lg);
+  background: var(--accent);
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 245, 212, 0.3);
+  z-index: 20;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.floating-bar.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.floating-bar:active {
+  transform: scale(0.97);
+}
+.floating-bar svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--bg);
+  margin-right: var(--sm);
+}
+.floating-bar .bar-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bg);
+  flex: 1;
+}
+.floating-bar .chevron {
+  fill: rgba(10, 10, 18, 0.7);
+}
+
+/* ========================================
+   TAB BAR
+   ======================================== */
+.tab-bar {
+  display: flex;
+  padding: 6px 0 0;
+  background: var(--bg);
+  border-top: 0.5px solid var(--divider);
+  flex-shrink: 0;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+.tab-item svg {
+  width: 22px;
+  height: 22px;
+}
+.tab-item.active svg { fill: var(--accent); }
+.tab-item:not(.active) svg { fill: var(--text-secondary); }
+.tab-item .tab-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tab-item.active .tab-label { color: var(--accent); }
+.tab-item:not(.active) .tab-label { color: var(--text-secondary); }
+
+/* ========================================
+   BET SLIP SHEET (Overlay)
+   ======================================== */
+.sheet-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.sheet-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bet-slip-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 88%;
+  background: var(--bg);
+  border-radius: 16px 16px 0 0;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.bet-slip-sheet.visible {
+  transform: translateY(0);
+}
+
+/* Sheet handle */
+.sheet-handle-area {
+  padding: 8px 0 4px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sheet-handle {
+  width: 36px;
+  height: 5px;
+  background: var(--text-muted);
+  border-radius: 3px;
+  opacity: 0.4;
+}
+
+/* Sheet header */
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px var(--lg) var(--md);
+  flex-shrink: 0;
+}
+.sheet-header .close-btn {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.sheet-header .sheet-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text-primary);
+}
+.sheet-header .clear-btn {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--danger);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Accent top border */
+.accent-border {
+  height: 3px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Mode toggle */
+.mode-toggle {
+  display: flex;
+  margin: var(--md) var(--lg) 0;
+  background: var(--elevated-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.mode-btn {
+  flex: 1;
+  padding: 10px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.2s ease;
+  outline: none;
+  color: var(--text-secondary);
+}
+.mode-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+/* Selection count */
+.selection-count {
+  padding: var(--sm) var(--lg) 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.selection-count .max {
+  color: var(--text-muted);
+}
+
+/* Sheet scrollable */
+.sheet-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: var(--md) var(--lg);
+}
+.sheet-scroll::-webkit-scrollbar { display: none; }
+
+/* Selection card */
+.selection-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 0.5px solid var(--border);
+  margin-bottom: var(--md);
+  overflow: hidden;
+}
+.selection-card.animate-in {
+  animation: cardIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.selection-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sm);
+  padding: var(--md) var(--md) var(--sm);
+}
+.selection-team {
+  flex: 1;
+}
+.selection-team .pick-name {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.selection-team .context {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.selection-odds {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.remove-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  outline: none;
+  flex-shrink: 0;
+}
+.remove-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-muted);
+}
+
+/* Stake fields (singles) */
+.stake-fields {
+  display: flex;
+  gap: var(--md);
+  padding: var(--sm) var(--md) var(--md);
+  border-top: 1px solid var(--divider);
+}
+.stake-field {
+  flex: 1;
+  padding: var(--md) var(--md) var(--sm);
+  background: var(--elevated-bg);
+  border-radius: 8px;
+  border: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.stake-field.active {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 8px rgba(255, 230, 109, 0.5);
+}
+.stake-field.active.towin {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 245, 212, 0.5);
+}
+.stake-field .field-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.stake-field.active .field-label {
+  color: var(--gold);
+}
+.stake-field.active.towin .field-label {
+  color: var(--accent);
+}
+.stake-field .field-value {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.stake-field .dollar {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.stake-field .amount {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-muted);
+  min-width: 20px;
+}
+.stake-field.has-value .dollar,
+.stake-field.has-value .amount {
+  color: var(--gold);
+}
+.stake-field.has-value.towin .dollar,
+.stake-field.has-value.towin .amount {
+  color: var(--accent);
+}
+
+/* Summary section */
+.summary-section {
+  margin-top: var(--sm);
+}
+.summary-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--sm);
+}
+.summary-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 0.5px solid var(--border);
+  overflow: hidden;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--md) var(--lg);
+}
+.summary-row:not(:last-child) {
+  border-bottom: 1px solid var(--divider);
+}
+.summary-row .label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.summary-row .value {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.summary-row.total {
+  padding: var(--lg);
+  background: linear-gradient(to left, rgba(0, 245, 212, 0.1), transparent);
+}
+.summary-row.total .label {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.summary-row.total .value {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ========================================
+   STICKY BOTTOM (Keypad + Submit)
+   ======================================== */
+.sheet-bottom {
+  flex-shrink: 0;
+  background: var(--card-bg);
+  border-top: 1px solid var(--divider);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+}
+.sheet-bottom-inner {
+  padding: var(--lg);
+}
+
+/* Numeric keypad */
+.keypad-area {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.keypad-area.visible {
+  max-height: 300px;
+}
+
+.quick-stakes {
+  display: flex;
+  gap: var(--sm);
+  margin-top: var(--md);
+  margin-bottom: var(--sm);
+  align-items: center;
+}
+.quick-stake-btn {
+  padding: 6px 0;
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--elevated-bg);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  text-align: center;
+  outline: none;
+}
+.quick-stake-btn:active {
+  background: var(--border);
+}
+.done-btn {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  padding: 6px 4px;
+  outline: none;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 6px 0;
+}
+.key-btn {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--elevated-bg);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.key-btn:active {
+  transform: scale(0.95);
+  background: var(--border);
+}
+.key-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--text-primary);
+}
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  padding: var(--lg);
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--bg);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to bottom, var(--accent), rgba(0, 245, 212, 0.85));
+  box-shadow: 0 4px 12px rgba(0, 245, 212, 0.4);
+  transition: all 0.2s ease;
+  outline: none;
+  margin-top: var(--md);
+}
+.submit-btn:active {
+  transform: scale(0.97);
+}
+.submit-btn.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.submit-btn.disabled:active {
+  transform: none;
+}
+.compliance-text {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: var(--sm);
+}
+
+/* ========================================
+   SUCCESS STATE
+   ======================================== */
+.success-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.success-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.success-check-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin-bottom: var(--xl);
+}
+.success-glow-outer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 245, 212, 0.1);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+.success-glow-inner {
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  background: rgba(0, 245, 212, 0.2);
+}
+.success-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  opacity: 0;
+  animation: ringExpand 0.6s 0.2s ease-out forwards;
+}
+.success-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0);
+  animation: checkPop 0.4s 0.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.success-icon svg {
+  width: 70px;
+  height: 70px;
+  fill: var(--accent);
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+@keyframes ringExpand {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+.success-message {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--sm);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.4s 0.4s ease forwards;
+}
+.success-subtext {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: var(--xxl);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.4s 0.5s ease forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.done-action-btn {
+  width: calc(100% - 64px);
+  padding: var(--lg);
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: linear-gradient(to bottom, var(--accent), rgba(0, 245, 212, 0.85));
+  box-shadow: 0 4px 12px rgba(0, 245, 212, 0.4);
+  cursor: pointer;
+  outline: none;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.4s 0.6s ease forwards;
+}
+.done-action-btn:active {
+  transform: scale(0.97) translateY(0);
+}
+
+/* ========================================
+   SEARCH TAB
+   ======================================== */
+.search-view {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  min-height: 0;
+}
+.search-view.active { display: flex; }
+
+.search-bar-wrap {
+  padding: var(--md) var(--lg);
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--divider);
+  flex-shrink: 0;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--card-bg);
+  border-radius: 12px;
+}
+.search-bar svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--text-secondary);
+  flex-shrink: 0;
+}
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-primary);
+}
+.search-bar input::placeholder {
+  color: var(--text-muted);
+}
+.search-bar .clear-search {
+  cursor: pointer;
+  display: none;
+}
+.search-bar .clear-search.visible { display: block; }
+
+.search-content {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+}
+.search-content::-webkit-scrollbar { display: none; }
+
+.sport-browse-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  padding: 20px 20px 8px;
+}
+.sport-browse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 var(--lg);
+}
+.sport-browse-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(to bottom, var(--card-bg), #0E0E18);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+.sport-browse-row .sport-icon {
+  width: 28px;
+  text-align: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.sport-browse-row .sport-name {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.sport-browse-row .chevron-right {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 120px;
+  gap: 16px;
+}
+.no-results svg {
+  width: 48px;
+  height: 48px;
+  fill: var(--text-muted);
+}
+.no-results .nr-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.no-results .nr-sub {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0 32px;
+}
+
+/* ========================================
+   TRACK TAB
+   ======================================== */
+.track-view {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  min-height: 0;
+}
+.track-view.active { display: flex; }
+
+.track-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+  padding: var(--lg);
+}
+.track-scroll::-webkit-scrollbar { display: none; }
+
+/* Summary card */
+.track-summary {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 0.5px solid var(--border);
+  padding: var(--lg);
+  margin-bottom: var(--lg);
+}
+.track-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--md) 0;
+}
+.track-summary-row:not(:last-child) {
+  border-bottom: 1px solid var(--divider);
+}
+.track-summary-row .ts-label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.track-summary-row .ts-value {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Filter chips */
+.track-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: var(--lg);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.track-filters::-webkit-scrollbar { display: none; }
+.filter-chip {
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--elevated-bg);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  outline: none;
+  flex-shrink: 0;
+}
+.filter-chip.active {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Pick cards */
+.pick-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 0.5px solid var(--border);
+  padding: var(--md);
+  margin-bottom: var(--md);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.pick-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sm);
+  margin-bottom: 4px;
+}
+.pick-card-title {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-pill.won {
+  color: var(--accent);
+  background: rgba(0, 245, 212, 0.15);
+}
+.status-pill.lost {
+  color: var(--danger);
+  background: rgba(255, 107, 107, 0.15);
+}
+.status-pill.open {
+  color: #7B68EE;
+  background: rgba(123, 104, 238, 0.15);
+}
+.status-pill.push {
+  color: var(--text-muted);
+  background: rgba(107, 107, 123, 0.15);
+}
+.pick-card-context {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pick-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pick-card-footer .stake {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.pick-card-footer .profit {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+}
+.pick-card-footer .profit.win { color: var(--accent); }
+.pick-card-footer .profit.loss { color: var(--danger); }
+.pick-card-footer .profit.neutral { color: var(--text-secondary); }
+.pick-card-footer .score {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Parlay dots */
+.leg-dots {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  align-items: center;
+}
+.leg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.leg-dot.win { background: var(--accent); }
+.leg-dot.loss { background: var(--danger); }
+.leg-dot.push { background: var(--warning); }
+.leg-dot.pending { background: rgba(107, 107, 123, 0.5); }
+
+/* Track empty state */
+.track-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 120px;
+  gap: 16px;
+}
+.track-empty svg {
+  width: 48px;
+  height: 48px;
+  fill: var(--text-muted);
+}
+.track-empty .te-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.track-empty .te-sub {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0 32px;
+}
+
+/* ========================================
+   ACCOUNT TAB
+   ======================================== */
+.account-view {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  min-height: 0;
+}
+.account-view.active { display: flex; }
+
+.account-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--bg);
+  padding: var(--lg);
+}
+.account-scroll::-webkit-scrollbar { display: none; }
+
+/* Hero balance */
+.hero-balance {
+  background: linear-gradient(to bottom, var(--card-bg), #0E0E18);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+  padding: 32px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+.hero-balance .hb-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.hero-balance .hb-amount {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.hero-balance .hb-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.hero-balance .hb-status svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--accent);
+}
+.hero-balance .hb-disclaimer {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Account cards */
+.account-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 0.5px solid var(--border);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* Profile rows */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.profile-row:not(:last-child) {
+  border-bottom: 1px solid var(--divider);
+}
+.profile-row .pr-icon {
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.profile-row .pr-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-muted);
+}
+.profile-row .pr-label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  width: 90px;
+  flex-shrink: 0;
+}
+.profile-row .pr-value {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: right;
+}
+
+/* Record hero */
+.record-hero {
+  background: var(--elevated-bg);
+  border-radius: 12px;
+  border: 0.5px solid var(--border);
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.record-hero .rh-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.record-hero .rh-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.record-hero .rh-value .w { color: var(--accent); }
+.record-hero .rh-value .l { color: var(--danger); }
+.record-hero .rh-value .p { color: var(--warning); }
+.record-hero .rh-value .dash { color: var(--text-muted); }
+.record-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.record-legend .leg {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.record-legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Stat rows */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+.stat-row:not(:last-child) {
+  border-bottom: 1px solid var(--divider);
+}
+.stat-row .sr-label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.stat-row .sr-value {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Credit bar */
+.credit-section {
+  padding-top: 12px;
+  border-top: 1px solid var(--divider);
+  margin-top: 4px;
+}
+.credit-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.credit-header .cl-label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.credit-header .cl-value {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.credit-bar {
+  height: 10px;
+  background: var(--elevated-bg);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.credit-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* Menu rows */
+.menu-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+}
+.menu-row:not(:last-child) {
+  border-bottom: 0.5px solid var(--border);
+  margin-left: 0;
+}
+.menu-row .mr-icon {
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.menu-row .mr-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.menu-row .mr-title {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.menu-row .mr-chevron {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.menu-row.danger .mr-title {
+  color: var(--danger);
+}
+
+/* ========================================
+   TAB VIEWS (shared)
+   ======================================== */
+.tab-view-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px var(--lg) var(--md);
+  background: var(--card-bg);
+  border-bottom: 0.5px solid var(--divider);
+  flex-shrink: 0;
+  position: relative;
+}
+.tab-view-header .logo {
+  position: absolute;
+  left: var(--lg);
+}
+.tab-view-header .logo img {
+  height: 20px;
+  width: auto;
+}
+.tab-view-header .tvh-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--text-primary);
+}
+
+/* ========================================
+   UTILITY
+   ======================================== */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="dynamic-island"></div>
+  <div class="phone-screen" id="app">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1" opacity="0.3"/></svg>
+        <svg width="15" height="12" viewBox="0 0 15 12"><path d="M7.5 2.5C9.8 2.5 11.8 3.4 13.3 4.9L14.5 3.7C12.6 1.8 10.2 0.5 7.5 0.5C4.8 0.5 2.4 1.8 0.5 3.7L1.7 4.9C3.2 3.4 5.2 2.5 7.5 2.5ZM7.5 6.5C8.9 6.5 10.2 7 11.2 7.9L12.4 6.7C11 5.4 9.3 4.5 7.5 4.5C5.7 4.5 4 5.4 2.6 6.7L3.8 7.9C4.8 7 6.1 6.5 7.5 6.5ZM7.5 10.5C8.2 10.5 8.8 10.2 9.2 9.8L7.5 8L5.8 9.8C6.2 10.2 6.8 10.5 7.5 10.5Z"/></svg>
+        <svg width="27" height="12" viewBox="0 0 27 12"><rect x="0" y="1" width="22" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1"/><rect x="23" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="17" height="7" rx="1" fill="var(--accent)"/></svg>
+      </div>
+    </div>
+
+    <!-- Games View -->
+    <div id="gamesView" style="flex: 1; flex-direction: column; min-height: 0; display: flex;">
+      <!-- App Header -->
+      <div class="app-header" style="position: relative;">
+        <img src="/booki/assets/logo-booki-wh.svg" alt="Booki" style="height: 20px; width: auto;">
+        <div class="title">Games</div>
+        <div class="balance">$500.00</div>
+      </div>
+
+      <!-- Sport Tabs -->
+      <div class="sport-tabs">
+        <button class="sport-tab active" data-sport="all">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-.52.07-1.04.07-1.57.04-.19-.02-.38-.03-.57-.06l2.63-4.55 2.14 1.23c-.22.28-.45.55-.7.8A7.93 7.93 0 0113 19.93zM5.94 17.07c-.47-.56-.87-1.18-1.18-1.85l3.5-2.02 1.22 2.12-3.54 1.75zm-.87-5.07H4.05c.16-1.59.79-3.04 1.73-4.22l.7 1.22-1.41 2.99zm2.36-6.43A7.93 7.93 0 0112 4.07c.55.04 1.08.12 1.59.25L10.97 9.1 7.43 5.57zM18.07 6.93c.47.56.87 1.18 1.18 1.85l-3.5 2.02-1.22-2.12 3.54-1.75z"/></svg>
+          All
+        </button>
+        <button class="sport-tab" data-sport="basketball">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2C12 12 12 12 12 22M2 12h20M4.93 4.93c4.08 2.38 8.06 2.38 14.14 0M4.93 19.07c4.08-2.38 8.06-2.38 14.14 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          Basketball
+        </button>
+        <button class="sport-tab" data-sport="football">
+          <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="7" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(-30 12 12)"/><line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="1.5"/><line x1="9" y1="9.5" x2="15" y2="9.5" stroke="currentColor" stroke-width="1"/><line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1"/><line x1="9" y1="14.5" x2="15" y2="14.5" stroke="currentColor" stroke-width="1"/></svg>
+          Football
+        </button>
+        <button class="sport-tab" data-sport="baseball">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 4.5c1.5 3 1.5 6.5 0 10M18 4.5c-1.5 3-1.5 6.5 0 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          Baseball
+        </button>
+        <button class="sport-tab" data-sport="hockey">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="currentColor"/></svg>
+          Hockey
+        </button>
+      </div>
+
+      <!-- Games List -->
+      <div class="games-list" id="gamesList"></div>
+    </div>
+
+    <!-- Search View -->
+    <div class="search-view" id="searchView">
+      <div class="tab-view-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="tvh-title">Search</span>
+      </div>
+      <div class="search-bar-wrap">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" placeholder="Search teams..." id="searchInput" oninput="onSearchInput()" />
+          <svg class="clear-search" id="clearSearch" onclick="clearSearch()" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+        </div>
+      </div>
+      <div class="search-content" id="searchContent">
+        <div class="sport-browse-label">Sports</div>
+        <div class="sport-browse-list">
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127936;</span><span class="sport-name">Basketball</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127944;</span><span class="sport-name">Football</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#9918;</span><span class="sport-name">Baseball</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127954;</span><span class="sport-name">Hockey</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#9917;</span><span class="sport-name">Soccer</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#129354;</span><span class="sport-name">MMA</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127934;</span><span class="sport-name">Tennis</span><span class="chevron-right">&#8250;</span></div>
+          <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#9971;</span><span class="sport-name">Golf</span><span class="chevron-right">&#8250;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track View -->
+    <div class="track-view" id="trackView">
+      <div class="tab-view-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="tvh-title">Track</span>
+      </div>
+      <div class="track-scroll">
+        <div class="track-summary">
+          <div class="track-summary-row">
+            <span class="ts-label">Record</span>
+            <span class="ts-value">8-3-1</span>
+          </div>
+          <div class="track-summary-row">
+            <span class="ts-label">Total Staked</span>
+            <span class="ts-value">$1,240.00</span>
+          </div>
+          <div class="track-summary-row">
+            <span class="ts-label" style="font-weight:700;color:var(--text-primary);">Net Performance</span>
+            <span class="ts-value" style="font-size:20px;color:var(--accent);">+$385.00</span>
+          </div>
+        </div>
+
+        <div class="track-filters">
+          <button class="filter-chip active">All (12)</button>
+          <button class="filter-chip">Open (2)</button>
+          <button class="filter-chip">Won (8)</button>
+          <button class="filter-chip">Lost (3)</button>
+          <button class="filter-chip">Pushed (1)</button>
+        </div>
+
+        <!-- Sample pick cards -->
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Celtics -4.5 (-110)</span>
+            <span class="status-pill open">Open</span>
+          </div>
+          <div class="pick-card-context">NBA &middot; BOS @ NYK &middot; Today 7:00 PM</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $100.00</span>
+            <span class="profit neutral">Potential: +$90.91</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Multi-Pick &middot; 3 Selections (+450)</span>
+            <span class="status-pill won">Won</span>
+          </div>
+          <div class="pick-card-context">3-Leg Parlay</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $50.00</span>
+            <span class="profit win">Profit: +$225.00</span>
+            <div class="leg-dots">
+              <div class="leg-dot win"></div>
+              <div class="leg-dot win"></div>
+              <div class="leg-dot win"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Lakers ML (+118)</span>
+            <span class="status-pill won">Won</span>
+          </div>
+          <div class="pick-card-context">NBA &middot; LAL @ PHI &middot; Apr 10</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $75.00</span>
+            <span class="profit win">Profit: +$88.50</span>
+            <span class="score">112-104</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Over 228.5 (-112)</span>
+            <span class="status-pill lost">Lost</span>
+          </div>
+          <div class="pick-card-context">NBA &middot; GSW @ DEN &middot; Apr 9</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $60.00</span>
+            <span class="profit loss">Loss: -$60.00</span>
+            <span class="score">108-112</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Yankees -1.5 (+140)</span>
+            <span class="status-pill won">Won</span>
+          </div>
+          <div class="pick-card-context">MLB &middot; NYY @ BOS &middot; Apr 8</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $80.00</span>
+            <span class="profit win">Profit: +$112.00</span>
+            <span class="score">7-3</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Multi-Pick &middot; 2 Selections (+285)</span>
+            <span class="status-pill lost">Lost</span>
+          </div>
+          <div class="pick-card-context">2-Leg Parlay</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $40.00</span>
+            <span class="profit loss">Loss: -$40.00</span>
+            <div class="leg-dots">
+              <div class="leg-dot win"></div>
+              <div class="leg-dot loss"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">Rangers ML (+135)</span>
+            <span class="status-pill push">Push</span>
+          </div>
+          <div class="pick-card-context">NHL &middot; NYR @ CAR &middot; Apr 7</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $50.00</span>
+            <span class="profit neutral">Returned: $50.00</span>
+            <span class="score">3-3</span>
+          </div>
+        </div>
+
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <span class="pick-card-title">76ers -2.5 (-112)</span>
+            <span class="status-pill open">Open</span>
+          </div>
+          <div class="pick-card-context">NBA &middot; LAL @ PHI &middot; Today 7:30 PM</div>
+          <div class="pick-card-footer">
+            <span class="stake">Stake: $120.00</span>
+            <span class="profit neutral">Potential: +$107.14</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account View -->
+    <div class="account-view" id="accountView">
+      <div class="tab-view-header">
+        <div class="logo"><img src="/booki/assets/logo-booki-wh.svg" alt="Booki"></div>
+        <span class="tvh-title">Account</span>
+      </div>
+      <div class="account-scroll">
+        <!-- Hero Balance -->
+        <div class="hero-balance">
+          <div class="hb-label">Current Balance</div>
+          <div class="hb-amount">+$385</div>
+          <div class="hb-status">
+            <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+            Amount owed to you
+          </div>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="account-card">
+          <div class="profile-row">
+            <span class="pr-icon"><svg viewBox="0 0 24 24"><path fill="var(--text-muted)" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+            <span class="pr-label">Name</span>
+            <span class="pr-value">Alex Johnson</span>
+          </div>
+          <div class="profile-row">
+            <span class="pr-icon"><svg viewBox="0 0 24 24"><path fill="var(--text-muted)" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+            <span class="pr-label">Email</span>
+            <span class="pr-value">alex@email.com</span>
+          </div>
+          <div class="profile-row">
+            <span class="pr-icon"><svg viewBox="0 0 24 24"><path fill="var(--text-muted)" d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></span>
+            <span class="pr-label">Organizer</span>
+            <span class="pr-value">Tyler's Book</span>
+          </div>
+          <div class="profile-row">
+            <span class="pr-icon"><svg viewBox="0 0 24 24"><path fill="var(--text-muted)" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg></span>
+            <span class="pr-label">Member Since</span>
+            <span class="pr-value">Mar 2026</span>
+          </div>
+        </div>
+
+        <!-- Performance Card -->
+        <div class="account-card">
+          <div class="record-hero">
+            <div class="rh-label">Record</div>
+            <div class="rh-value">
+              <span class="w">8</span><span class="dash">-</span><span class="l">3</span><span class="dash">-</span><span class="p">1</span>
+            </div>
+            <div class="record-legend">
+              <span class="leg"><span class="dot" style="background:var(--accent);"></span> W</span>
+              <span class="leg"><span class="dot" style="background:var(--danger);"></span> L</span>
+              <span class="leg"><span class="dot" style="background:var(--warning);"></span> P</span>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <span class="sr-label">Open Picks</span>
+            <span class="sr-value" style="color:#7B68EE;">2</span>
+          </div>
+          <div class="stat-row">
+            <span class="sr-label">Win Rate</span>
+            <span class="sr-value" style="color:var(--accent);">72.7%</span>
+          </div>
+          <div class="stat-row">
+            <span class="sr-label">Performance</span>
+            <span class="sr-value" style="color:var(--accent);">+$385.00</span>
+          </div>
+          <div class="stat-row">
+            <span class="sr-label">ROI</span>
+            <span class="sr-value" style="color:var(--accent);">+31.0%</span>
+          </div>
+
+          <div class="credit-section">
+            <div class="credit-header">
+              <span class="cl-label">Credit</span>
+              <span class="cl-value">$115 / $500</span>
+            </div>
+            <div class="credit-bar">
+              <div class="credit-bar-fill" style="width: 23%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu Card -->
+        <div class="account-card" style="padding: 0; overflow: hidden;">
+          <div class="menu-row">
+            <span class="mr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M13.26 3C8.17 2.86 4 6.95 4 12H2.21c-.45 0-.67.54-.35.85l2.79 2.8c.2.2.51.2.71 0l2.79-2.8c.32-.31.09-.85-.35-.85H6c0-3.9 3.18-7.05 7.1-7 3.72.05 6.85 3.18 6.9 6.9.05 3.91-3.1 7.1-7 7.1-1.61 0-3.1-.55-4.28-1.48-.4-.31-.96-.28-1.32.08-.42.42-.39 1.13.08 1.49C9 20.29 10.91 21 13 21c5.05 0 9.14-4.17 9-9.26-.13-4.69-4.05-8.61-8.74-8.74z"/></svg></span>
+            <span class="mr-title">Activity</span>
+            <span class="mr-chevron">&#8250;</span>
+          </div>
+          <div class="menu-row">
+            <span class="mr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg></span>
+            <span class="mr-title">Change Password</span>
+            <span class="mr-chevron">&#8250;</span>
+          </div>
+          <div class="menu-row">
+            <span class="mr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="mr-title">Notifications</span>
+            <span class="mr-chevron">&#8250;</span>
+          </div>
+          <div class="menu-row">
+            <span class="mr-icon"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></span>
+            <span class="mr-title">About</span>
+            <span class="mr-chevron">&#8250;</span>
+          </div>
+          <div class="menu-row danger">
+            <span class="mr-icon"><svg viewBox="0 0 24 24"><path fill="var(--danger)" d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></span>
+            <span class="mr-title">Log Out</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Bet Slip Bar -->
+    <div class="floating-bar" id="floatingBar" onclick="openBetSlip()">
+      <svg viewBox="0 0 24 24"><path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z"/></svg>
+      <span class="bar-text" id="barText">1 Selection</span>
+      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+    </div>
+
+    <!-- Bet Slip Sheet -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="closeBetSlip()"></div>
+    <div class="bet-slip-sheet" id="betSlipSheet">
+      <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+      <div class="sheet-header">
+        <button class="close-btn" onclick="closeBetSlip()">Close</button>
+        <span class="sheet-title">Pick Entry</span>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
+      </div>
+      <div class="accent-border"></div>
+
+      <!-- Mode Toggle -->
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="singlesBtn" onclick="setMode('singles')">Singles</button>
+        <button class="mode-btn" id="parlayBtn" onclick="setMode('parlay')">Multi-Pick</button>
+      </div>
+
+      <div class="selection-count" id="selectionCount">1 selection &middot; <span class="max">$500.00 max</span></div>
+
+      <!-- Scrollable selections -->
+      <div class="sheet-scroll" id="sheetScroll"></div>
+
+      <!-- Sticky bottom -->
+      <div class="sheet-bottom">
+        <div class="keypad-area" id="keypadArea">
+          <div style="padding: 0 16px;">
+            <div class="quick-stakes">
+              <button class="quick-stake-btn" onclick="addQuickStake(1)">+$1</button>
+              <button class="quick-stake-btn" onclick="addQuickStake(5)">+$5</button>
+              <button class="quick-stake-btn" onclick="addQuickStake(25)">+$25</button>
+              <button class="done-btn" onclick="closeKeypad()">Done</button>
+            </div>
+            <div class="keypad-grid">
+              <button class="key-btn" onclick="keyPress('1')">1</button>
+              <button class="key-btn" onclick="keyPress('2')">2</button>
+              <button class="key-btn" onclick="keyPress('3')">3</button>
+              <button class="key-btn" onclick="keyPress('4')">4</button>
+              <button class="key-btn" onclick="keyPress('5')">5</button>
+              <button class="key-btn" onclick="keyPress('6')">6</button>
+              <button class="key-btn" onclick="keyPress('7')">7</button>
+              <button class="key-btn" onclick="keyPress('8')">8</button>
+              <button class="key-btn" onclick="keyPress('9')">9</button>
+              <button class="key-btn" onclick="keyPress('.')">.</button>
+              <button class="key-btn" onclick="keyPress('0')">0</button>
+              <button class="key-btn" onclick="keyPress('del')">
+                <svg viewBox="0 0 24 24"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sheet-bottom-inner">
+          <button class="submit-btn disabled" id="submitBtn" onclick="submitPicks()">Record Pick</button>
+          <div class="compliance-text">For tracking purposes only.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-check-container">
+        <div class="success-glow-outer"></div>
+        <div class="success-glow-inner"></div>
+        <div class="success-ring"></div>
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+      </div>
+      <div class="success-message" id="successMsg">Locked in.</div>
+      <div class="success-subtext" id="successSub">1 pick recorded.</div>
+      <button class="done-action-btn" onclick="resetFromSuccess()">Done</button>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-item active" data-tab="games" onclick="switchTab('games')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-.52.07-1.04.07-1.57.04l2.63-4.55 2.14 1.23A7.93 7.93 0 0113 19.93zM5.94 17.07c-.47-.56-.87-1.18-1.18-1.85l3.5-2.02 1.22 2.12-3.54 1.75zm-.87-5.07H4.05c.16-1.59.79-3.04 1.73-4.22l.7 1.22-1.41 2.99zm2.36-6.43A7.93 7.93 0 0112 4.07l-1.03 4.78L7.43 5.57zM18.07 6.93l-3.54 1.75-1.22-2.12 3.5-2.02c.47.56.87 1.18 1.18 1.85z"/></svg>
+        <span class="tab-label">Games</span>
+      </button>
+      <button class="tab-item" data-tab="search" onclick="switchTab('search')">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <span class="tab-label">Search</span>
+      </button>
+      <button class="tab-item" data-tab="track" onclick="switchTab('track')">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span class="tab-label">Track</span>
+      </button>
+      <button class="tab-item" data-tab="account" onclick="switchTab('account')">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span class="tab-label">Account</span>
+      </button>
+    </div>
+
+    <!-- Home Indicator -->
+    <div class="home-indicator">
+      <div class="home-indicator-bar"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ========================================
+// GAME DATA
+// ========================================
+const GAMES = [
+  {
+    sport: 'Basketball', league: 'NBA', sportKey: 'basketball',
+    time: 'Today 7:00 PM',
+    away: { name: 'Celtics', abbr: 'BOS' },
+    home: { name: 'Knicks', abbr: 'NYK' },
+    spread: { away: { line: '-4.5', odds: '-110' }, home: { line: '+4.5', odds: '-110' } },
+    moneyline: { away: { odds: '-185' }, home: { odds: '+155' } },
+    total: { over: { line: 'o218.5', odds: '-110' }, under: { line: 'u218.5', odds: '-110' } },
+    moreMarkets: 6
+  },
+  {
+    sport: 'Basketball', league: 'NBA', sportKey: 'basketball',
+    time: 'Today 7:30 PM',
+    away: { name: 'Lakers', abbr: 'LAL' },
+    home: { name: '76ers', abbr: 'PHI' },
+    spread: { away: { line: '+2.5', odds: '-108' }, home: { line: '-2.5', odds: '-112' } },
+    moneyline: { away: { odds: '+118' }, home: { odds: '-140' } },
+    total: { over: { line: 'o224.0', odds: '-105' }, under: { line: 'u224.0', odds: '-115' } },
+    moreMarkets: 4
+  },
+  {
+    sport: 'Basketball', league: 'NBA', sportKey: 'basketball',
+    time: 'Today 10:00 PM',
+    away: { name: 'Warriors', abbr: 'GSW' },
+    home: { name: 'Nuggets', abbr: 'DEN' },
+    spread: { away: { line: '+6.5', odds: '-110' }, home: { line: '-6.5', odds: '-110' } },
+    moneyline: { away: { odds: '+220' }, home: { odds: '-270' } },
+    total: { over: { line: 'o228.5', odds: '-112' }, under: { line: 'u228.5', odds: '-108' } },
+    moreMarkets: 5
+  },
+  {
+    sport: 'Baseball', league: 'MLB', sportKey: 'baseball',
+    time: 'Today 7:05 PM',
+    away: { name: 'Yankees', abbr: 'NYY' },
+    home: { name: 'Red Sox', abbr: 'BOS' },
+    spread: { away: { line: '-1.5', odds: '+140' }, home: { line: '+1.5', odds: '-165' } },
+    moneyline: { away: { odds: '-150' }, home: { odds: '+128' } },
+    total: { over: { line: 'o8.5', odds: '-105' }, under: { line: 'u8.5', odds: '-115' } },
+    moreMarkets: 3
+  },
+  {
+    sport: 'Baseball', league: 'MLB', sportKey: 'baseball',
+    time: 'Tomorrow 1:10 PM',
+    away: { name: 'Dodgers', abbr: 'LAD' },
+    home: { name: 'Padres', abbr: 'SD' },
+    spread: { away: { line: '-1.5', odds: '+120' }, home: { line: '+1.5', odds: '-142' } },
+    moneyline: { away: { odds: '-175' }, home: { odds: '+148' } },
+    total: { over: { line: 'o7.5', odds: '-110' }, under: { line: 'u7.5', odds: '-110' } },
+    moreMarkets: 3
+  },
+  {
+    sport: 'Hockey', league: 'NHL', sportKey: 'hockey',
+    time: 'Today 8:00 PM',
+    away: { name: 'Rangers', abbr: 'NYR' },
+    home: { name: 'Hurricanes', abbr: 'CAR' },
+    spread: { away: { line: '+1.5', odds: '-180' }, home: { line: '-1.5', odds: '+155' } },
+    moneyline: { away: { odds: '+135' }, home: { odds: '-158' } },
+    total: { over: { line: 'o5.5', odds: '-120' }, under: { line: 'u5.5', odds: '+100' } },
+    moreMarkets: 2
+  }
+];
+
+// ========================================
+// STATE
+// ========================================
+let selections = [];  // { id, gameIdx, team, type, line, odds, stake, toWin }
+let activeField = null; // { selId, field: 'stake'|'towin' }
+let mode = 'singles';
+let activeSport = 'all';
+let animateCards = false;
+
+const confirmMessages = [
+  "Locked in.", "You're in!", "On the board.", "Let's ride.",
+  "Picks are live.", "Money talks.", "Dialed in.", "Sharp move.",
+  "Registered.", "In the books.", "Confirmed.", "Set it and forget it.",
+  "All yours.", "Consider it done.", "Noted.", "Good luck.",
+  "The house is watching.", "Bold.", "Feeling lucky?", "Game on."
+];
+
+// ========================================
+// RENDER GAMES LIST
+// ========================================
+function renderGames() {
+  const list = document.getElementById('gamesList');
+  const filtered = activeSport === 'all' ? GAMES : GAMES.filter(g => g.sportKey === activeSport);
+
+  // Group by sport+league
+  const groups = {};
+  filtered.forEach((g, i) => {
+    const origIdx = GAMES.indexOf(g);
+    const key = `${g.sport}|${g.league}`;
+    if (!groups[key]) groups[key] = { sport: g.sport, league: g.league, games: [] };
+    groups[key].games.push({ ...g, origIdx });
+  });
+
+  let html = '';
+  Object.values(groups).forEach(group => {
+    html += `
+      <div class="section-header">
+        <div class="sport-league">
+          <span>${group.sport}</span>
+          <span class="dot">&middot;</span>
+          <span class="league">${group.league}</span>
+        </div>
+        <div class="market-labels">
+          <span class="market-label">Spread</span>
+          <span class="market-label">Money</span>
+          <span class="market-label">Total</span>
+        </div>
+      </div>`;
+
+    group.games.forEach(game => {
+      const gi = game.origIdx;
+      html += `
+        <div class="game-row">
+          <div class="game-time-row">
+            <span class="game-time">${game.time}</span>
+            ${game.moreMarkets ? `<div class="more-markets">+${game.moreMarkets}<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>` : ''}
+          </div>
+          ${renderTeamRow(gi, 'away', game)}
+          ${renderTeamRow(gi, 'home', game)}
+        </div>`;
+    });
+  });
+
+  list.innerHTML = html;
+}
+
+function renderTeamRow(gi, side, game) {
+  const team = game[side];
+  const sp = game.spread[side];
+  const ml = game.moneyline[side];
+  const tt = side === 'away' ? game.total.over : game.total.under;
+
+  const spreadId = `${gi}_spread_${side}`;
+  const mlId = `${gi}_ml_${side}`;
+  const totalId = `${gi}_total_${side}`;
+
+  const spreadSel = selections.find(s => s.id === spreadId) ? 'selected' : '';
+  const mlSel = selections.find(s => s.id === mlId) ? 'selected' : '';
+  const totalSel = selections.find(s => s.id === totalId) ? 'selected' : '';
+
+  return `
+    <div class="team-row">
+      <div class="team-badge">${team.abbr}</div>
+      <div class="team-name">${team.name}</div>
+      <div class="odds-grid">
+        <button class="odds-btn ${spreadSel}" onclick="toggleSelection('${spreadId}', ${gi}, '${team.name}', 'Spread', '${sp.line}', '${sp.odds}')">
+          <span class="line">${sp.line}</span>
+          <span class="odds">${sp.odds}</span>
+        </button>
+        <button class="odds-btn moneyline ${mlSel}" onclick="toggleSelection('${mlId}', ${gi}, '${team.name}', 'Moneyline', '', '${ml.odds}')">
+          <span class="odds">${ml.odds}</span>
+        </button>
+        <button class="odds-btn ${totalSel}" onclick="toggleSelection('${totalId}', ${gi}, '${team.name}', 'Total', '${tt.line}', '${tt.odds}')">
+          <span class="line">${tt.line}</span>
+          <span class="odds">${tt.odds}</span>
+        </button>
+      </div>
+    </div>`;
+}
+
+// ========================================
+// SELECTION MANAGEMENT
+// ========================================
+function toggleSelection(id, gameIdx, team, type, line, odds) {
+  const existing = selections.findIndex(s => s.id === id);
+  if (existing !== -1) {
+    selections.splice(existing, 1);
+  } else {
+    const game = GAMES[gameIdx];
+    const label = type === 'Moneyline' ? `${team}` :
+                  type === 'Total' ? `${line.startsWith('o') ? 'Over' : 'Under'} ${line.substring(1)}` :
+                  `${team} ${line}`;
+    selections.push({
+      id, gameIdx, team, type, line, odds, stake: '', toWin: '',
+      label,
+      context: `${game.league} · ${game.away.abbr} @ ${game.home.abbr} · ${game.time}`
+    });
+  }
+
+  // Auto-switch from parlay to singles if < 2
+  if (mode === 'parlay' && selections.length < 2) {
+    setMode('singles');
+  }
+
+  updateUI();
+}
+
+function removeSelection(id) {
+  selections = selections.filter(s => s.id !== id);
+  if (activeField && !selections.find(s => s.id === activeField.selId)) {
+    activeField = null;
+  }
+  if (mode === 'parlay' && selections.length < 2) {
+    setMode('singles');
+  }
+  updateUI();
+  if (selections.length === 0) closeBetSlip();
+}
+
+function clearAll() {
+  selections = [];
+  activeField = null;
+  updateUI();
+  closeBetSlip();
+}
+
+// ========================================
+// ODDS CALCULATION
+// ========================================
+function americanToDecimal(odds) {
+  const o = parseInt(odds);
+  return o > 0 ? (o / 100) + 1 : (100 / Math.abs(o)) + 1;
+}
+
+function calcToWin(stake, odds) {
+  if (!stake || isNaN(parseFloat(stake))) return '';
+  const dec = americanToDecimal(odds);
+  return (parseFloat(stake) * (dec - 1)).toFixed(2);
+}
+
+function calcStakeFromToWin(toWin, odds) {
+  if (!toWin || isNaN(parseFloat(toWin))) return '';
+  const dec = americanToDecimal(odds);
+  return (parseFloat(toWin) / (dec - 1)).toFixed(2);
+}
+
+function parlayDecimalOdds() {
+  let combined = 1;
+  selections.forEach(s => { combined *= americanToDecimal(s.odds); });
+  return combined;
+}
+
+function decimalToAmerican(dec) {
+  if (dec >= 2) return `+${Math.round((dec - 1) * 100)}`;
+  return `-${Math.round(100 / (dec - 1))}`;
+}
+
+// ========================================
+// BET SLIP RENDERING
+// ========================================
+function renderBetSlip() {
+  const scroll = document.getElementById('sheetScroll');
+  let html = '';
+
+  selections.forEach(sel => {
+    const stakeActive = activeField && activeField.selId === sel.id && activeField.field === 'stake';
+    const toWinActive = activeField && activeField.selId === sel.id && activeField.field === 'towin';
+    const hasStake = sel.stake && sel.stake !== '';
+    const hasToWin = sel.toWin && sel.toWin !== '';
+
+    html += `
+      <div class="selection-card${animateCards ? ' animate-in' : ''}">
+        <div class="selection-card-header">
+          <div class="selection-team">
+            <div class="pick-name">${sel.label}</div>
+            <div class="context">${sel.context}</div>
+          </div>
+          <span class="selection-odds">${sel.odds}</span>
+          <button class="remove-btn" onclick="removeSelection('${sel.id}')">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+          </button>
+        </div>
+        ${mode === 'singles' ? `
+        <div class="stake-fields">
+          <div class="stake-field ${stakeActive ? 'active' : ''} ${hasStake ? 'has-value' : ''}" onclick="activateField('${sel.id}', 'stake')">
+            <div class="field-label">Stake</div>
+            <div class="field-value">
+              <span class="dollar">$</span>
+              <span class="amount">${sel.stake || '0'}</span>
+            </div>
+          </div>
+          <div class="stake-field towin ${toWinActive ? 'active' : ''} ${hasToWin ? 'has-value' : ''}" onclick="activateField('${sel.id}', 'towin')">
+            <div class="field-label">Potential</div>
+            <div class="field-value">
+              <span class="dollar">$</span>
+              <span class="amount">${sel.toWin || '0'}</span>
+            </div>
+          </div>
+        </div>` : ''}
+      </div>`;
+  });
+
+  // Parlay odds card
+  if (mode === 'parlay' && selections.length >= 2) {
+    const decOdds = parlayDecimalOdds();
+    const amOdds = decimalToAmerican(decOdds);
+    html += `
+      <div style="background: linear-gradient(135deg, rgba(0,245,212,0.15), var(--card-bg)); border-radius: 12px; border: 1px solid rgba(0,245,212,0.3); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text-primary);">${selections.length}-Leg Multi-Pick</div>
+          <div style="font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Combined odds</div>
+        </div>
+        <div style="font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--accent);">${amOdds}</div>
+      </div>`;
+
+    // Parlay stake fields
+    const parlayStake = selections[0]?.parlayStake || '';
+    const parlayToWin = selections[0]?.parlayToWin || '';
+    const psActive = activeField && activeField.selId === 'parlay' && activeField.field === 'stake';
+    const ptActive = activeField && activeField.selId === 'parlay' && activeField.field === 'towin';
+    const hasPStake = parlayStake !== '';
+    const hasPToWin = parlayToWin !== '';
+
+    html += `
+      <div style="background: var(--card-bg); border-radius: 12px; border: 0.5px solid var(--border); padding: 12px; margin-bottom: 12px;">
+        <div class="stake-fields" style="border-top: none; padding: 0;">
+          <div class="stake-field ${psActive ? 'active' : ''} ${hasPStake ? 'has-value' : ''}" onclick="activateField('parlay', 'stake')" style="padding: 12px 12px 10px;">
+            <div class="field-label">Stake</div>
+            <div class="field-value">
+              <span class="dollar" style="font-size: 18px;">$</span>
+              <span class="amount" style="font-size: 22px;">${parlayStake || '0'}</span>
+            </div>
+          </div>
+          <div class="stake-field towin ${ptActive ? 'active' : ''} ${hasPToWin ? 'has-value' : ''}" onclick="activateField('parlay', 'towin')" style="padding: 12px 12px 10px;">
+            <div class="field-label">Potential</div>
+            <div class="field-value">
+              <span class="dollar" style="font-size: 18px;">$</span>
+              <span class="amount" style="font-size: 22px;">${parlayToWin || '0'}</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // Summary
+  if (mode === 'singles') {
+    const totalStake = selections.reduce((sum, s) => sum + (parseFloat(s.stake) || 0), 0);
+    const totalReturn = selections.reduce((sum, s) => sum + (parseFloat(s.stake) || 0) + (parseFloat(s.toWin) || 0), 0);
+    if (totalStake > 0) {
+      html += `
+        <div class="summary-section">
+          <div class="summary-label">Summary</div>
+          <div class="summary-card">
+            <div class="summary-row">
+              <span class="label">Number of Picks</span>
+              <span class="value">${selections.length}</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Total Stake</span>
+              <span class="value">$${totalStake.toFixed(2)}</span>
+            </div>
+            <div class="summary-row total">
+              <span class="label">Total Return</span>
+              <span class="value">$${totalReturn.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>`;
+    }
+  } else if (mode === 'parlay' && selections.length >= 2) {
+    const parlayStake = parseFloat(selections[0]?.parlayStake) || 0;
+    if (parlayStake > 0) {
+      const decOdds = parlayDecimalOdds();
+      const totalReturn = parlayStake * decOdds;
+      html += `
+        <div class="summary-section">
+          <div class="summary-label">Summary</div>
+          <div class="summary-card">
+            <div class="summary-row">
+              <span class="label">Total Stake</span>
+              <span class="value">$${parlayStake.toFixed(2)}</span>
+            </div>
+            <div class="summary-row total">
+              <span class="label">Total Return</span>
+              <span class="value">$${totalReturn.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>`;
+    }
+  }
+
+  scroll.innerHTML = html;
+}
+
+// ========================================
+// FIELD ACTIVATION & KEYPAD
+// ========================================
+function activateField(selId, field) {
+  activeField = { selId, field };
+  document.getElementById('keypadArea').classList.add('visible');
+  renderBetSlip();
+  updateSubmitButton();
+}
+
+function closeKeypad() {
+  activeField = null;
+  document.getElementById('keypadArea').classList.remove('visible');
+  renderBetSlip();
+}
+
+function keyPress(key) {
+  if (!activeField) return;
+
+  let sel, currentVal;
+  if (activeField.selId === 'parlay') {
+    sel = selections[0];
+    if (!sel) return;
+    currentVal = activeField.field === 'stake' ? (sel.parlayStake || '') : (sel.parlayToWin || '');
+  } else {
+    sel = selections.find(s => s.id === activeField.selId);
+    if (!sel) return;
+    currentVal = activeField.field === 'stake' ? sel.stake : sel.toWin;
+  }
+
+  if (key === 'del') {
+    currentVal = currentVal.slice(0, -1);
+  } else if (key === '.') {
+    if (!currentVal.includes('.')) currentVal += currentVal === '' ? '0.' : '.';
+  } else {
+    // Enforce 2 decimal places
+    const dotIdx = currentVal.indexOf('.');
+    if (dotIdx !== -1 && currentVal.length - dotIdx > 2) return;
+    currentVal += key;
+  }
+
+  // Set value and calculate bidirectional
+  if (activeField.selId === 'parlay') {
+    if (activeField.field === 'stake') {
+      sel.parlayStake = currentVal;
+      const dec = parlayDecimalOdds();
+      sel.parlayToWin = currentVal && !isNaN(parseFloat(currentVal))
+        ? (parseFloat(currentVal) * (dec - 1)).toFixed(2) : '';
+    } else {
+      sel.parlayToWin = currentVal;
+      const dec = parlayDecimalOdds();
+      sel.parlayStake = currentVal && !isNaN(parseFloat(currentVal))
+        ? (parseFloat(currentVal) / (dec - 1)).toFixed(2) : '';
+    }
+    // Sync parlay values to all selections
+    selections.forEach(s => {
+      s.parlayStake = sel.parlayStake;
+      s.parlayToWin = sel.parlayToWin;
+    });
+  } else {
+    if (activeField.field === 'stake') {
+      sel.stake = currentVal;
+      sel.toWin = calcToWin(currentVal, sel.odds);
+    } else {
+      sel.toWin = currentVal;
+      sel.stake = calcStakeFromToWin(currentVal, sel.odds);
+    }
+  }
+
+  renderBetSlip();
+  updateSubmitButton();
+}
+
+function addQuickStake(amount) {
+  if (!activeField) return;
+
+  let sel, currentVal;
+  if (activeField.selId === 'parlay') {
+    sel = selections[0];
+    if (!sel) return;
+    currentVal = activeField.field === 'stake' ? (sel.parlayStake || '0') : (sel.parlayToWin || '0');
+  } else {
+    sel = selections.find(s => s.id === activeField.selId);
+    if (!sel) return;
+    currentVal = activeField.field === 'stake' ? (sel.stake || '0') : (sel.toWin || '0');
+  }
+
+  const newVal = (parseFloat(currentVal) || 0) + amount;
+
+  if (activeField.selId === 'parlay') {
+    if (activeField.field === 'stake') {
+      sel.parlayStake = newVal.toString();
+      const dec = parlayDecimalOdds();
+      sel.parlayToWin = (newVal * (dec - 1)).toFixed(2);
+    } else {
+      sel.parlayToWin = newVal.toString();
+      const dec = parlayDecimalOdds();
+      sel.parlayStake = (newVal / (dec - 1)).toFixed(2);
+    }
+    selections.forEach(s => { s.parlayStake = sel.parlayStake; s.parlayToWin = sel.parlayToWin; });
+  } else {
+    if (activeField.field === 'stake') {
+      sel.stake = newVal.toString();
+      sel.toWin = calcToWin(sel.stake, sel.odds);
+    } else {
+      sel.toWin = newVal.toString();
+      sel.stake = calcStakeFromToWin(sel.toWin, sel.odds);
+    }
+  }
+
+  renderBetSlip();
+  updateSubmitButton();
+}
+
+// ========================================
+// MODE SWITCHING
+// ========================================
+function setMode(m) {
+  mode = m;
+  document.getElementById('singlesBtn').classList.toggle('active', m === 'singles');
+  document.getElementById('parlayBtn').classList.toggle('active', m === 'parlay');
+  activeField = null;
+  document.getElementById('keypadArea').classList.remove('visible');
+  renderBetSlip();
+  updateSubmitButton();
+}
+
+// ========================================
+// BET SLIP OPEN/CLOSE
+// ========================================
+function openBetSlip() {
+  animateCards = true;
+  document.getElementById('sheetOverlay').classList.add('visible');
+  document.getElementById('betSlipSheet').classList.add('visible');
+  renderBetSlip();
+  animateCards = false;
+}
+
+function closeBetSlip() {
+  document.getElementById('sheetOverlay').classList.remove('visible');
+  document.getElementById('betSlipSheet').classList.remove('visible');
+  activeField = null;
+  document.getElementById('keypadArea').classList.remove('visible');
+}
+
+// ========================================
+// SUBMIT
+// ========================================
+function updateSubmitButton() {
+  const btn = document.getElementById('submitBtn');
+  let hasValidStake = false;
+
+  if (mode === 'singles') {
+    hasValidStake = selections.some(s => parseFloat(s.stake) > 0);
+  } else {
+    hasValidStake = selections.length >= 2 && parseFloat(selections[0]?.parlayStake) > 0;
+  }
+
+  btn.classList.toggle('disabled', !hasValidStake);
+  btn.textContent = mode === 'parlay' && selections.length >= 2
+    ? 'Record Multi-Pick'
+    : selections.length > 1 ? `Record ${selections.length} Picks` : 'Record Pick';
+}
+
+function submitPicks() {
+  const btn = document.getElementById('submitBtn');
+  if (btn.classList.contains('disabled')) return;
+
+  const count = selections.length;
+  const msg = confirmMessages[Math.floor(Math.random() * confirmMessages.length)];
+
+  // Show success
+  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('successSub').textContent = `${count} pick${count > 1 ? 's' : ''} recorded.`;
+  document.getElementById('successOverlay').classList.add('visible');
+}
+
+function resetFromSuccess() {
+  document.getElementById('successOverlay').classList.remove('visible');
+  selections = [];
+  activeField = null;
+  mode = 'singles';
+  document.getElementById('singlesBtn').classList.add('active');
+  document.getElementById('parlayBtn').classList.remove('active');
+  closeBetSlip();
+  updateUI();
+}
+
+// ========================================
+// UI UPDATES
+// ========================================
+function updateUI() {
+  renderGames();
+
+  const bar = document.getElementById('floatingBar');
+  const barText = document.getElementById('barText');
+  const count = selections.length;
+
+  if (count > 0) {
+    bar.classList.add('visible');
+    barText.textContent = `${count} Selection${count > 1 ? 's' : ''}`;
+  } else {
+    bar.classList.remove('visible');
+  }
+
+  document.getElementById('selectionCount').innerHTML =
+    `${count} selection${count > 1 ? 's' : ''} &middot; <span class="max">$500.00 max</span>`;
+
+  renderBetSlip();
+  updateSubmitButton();
+}
+
+// ========================================
+// SPORT TAB SWITCHING
+// ========================================
+document.querySelectorAll('.sport-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeSport = tab.dataset.sport;
+    renderGames();
+  });
+});
+
+// ========================================
+// TAB SWITCHING
+// ========================================
+let activeTab = 'games';
+const tabViews = {
+  games: document.getElementById('gamesView'),
+  search: document.getElementById('searchView'),
+  track: document.getElementById('trackView'),
+  account: document.getElementById('accountView'),
+};
+
+function switchTab(tab) {
+  activeTab = tab;
+
+  // Toggle views
+  Object.entries(tabViews).forEach(([key, el]) => {
+    if (key === 'games') {
+      el.style.display = key === tab ? 'flex' : 'none';
+    } else {
+      el.classList.toggle('active', key === tab);
+    }
+  });
+
+  // Toggle tab bar buttons
+  document.querySelectorAll('.tab-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+
+  // Show/hide floating bar only on games tab
+  const bar = document.getElementById('floatingBar');
+  if (tab !== 'games') {
+    bar.style.display = 'none';
+  } else {
+    bar.style.display = '';
+    updateUI();
+  }
+}
+
+// ========================================
+// SEARCH FUNCTIONALITY
+// ========================================
+function onSearchInput() {
+  const input = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearSearch');
+  const content = document.getElementById('searchContent');
+  const query = input.value.trim().toLowerCase();
+
+  clearBtn.classList.toggle('visible', query.length > 0);
+
+  if (!query) {
+    // Show sport browse list
+    content.innerHTML = `
+      <div class="sport-browse-label">Sports</div>
+      <div class="sport-browse-list">
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127936;</span><span class="sport-name">Basketball</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127944;</span><span class="sport-name">Football</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#9918;</span><span class="sport-name">Baseball</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127954;</span><span class="sport-name">Hockey</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#9917;</span><span class="sport-name">Soccer</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#129354;</span><span class="sport-name">MMA</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#127934;</span><span class="sport-name">Tennis</span><span class="chevron-right">&#8250;</span></div>
+        <div class="sport-browse-row"><span class="sport-icon" style="color: var(--accent);">&#9971;</span><span class="sport-name">Golf</span><span class="chevron-right">&#8250;</span></div>
+      </div>`;
+    return;
+  }
+
+  // Filter games by team name
+  const results = GAMES.filter(g =>
+    g.away.name.toLowerCase().includes(query) ||
+    g.home.name.toLowerCase().includes(query) ||
+    g.away.abbr.toLowerCase().includes(query) ||
+    g.home.abbr.toLowerCase().includes(query)
+  );
+
+  if (results.length === 0) {
+    content.innerHTML = `
+      <div class="no-results">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <div class="nr-title">No Results Found</div>
+        <div class="nr-sub">No games matching "${input.value}"</div>
+      </div>`;
+    return;
+  }
+
+  // Group results by sport/league and render as game rows
+  const groups = {};
+  results.forEach(g => {
+    const key = `${g.sport}|${g.league}`;
+    if (!groups[key]) groups[key] = { sport: g.sport, league: g.league, games: [] };
+    groups[key].games.push(g);
+  });
+
+  let html = '';
+  Object.values(groups).forEach(group => {
+    html += `
+      <div class="section-header">
+        <div class="sport-league">
+          <span>${group.sport}</span>
+          <span class="dot">&middot;</span>
+          <span class="league">${group.league}</span>
+        </div>
+        <div class="market-labels">
+          <span class="market-label">Spread</span>
+          <span class="market-label">Money</span>
+          <span class="market-label">Total</span>
+        </div>
+      </div>`;
+    group.games.forEach(game => {
+      const gi = GAMES.indexOf(game);
+      html += `
+        <div class="game-row">
+          <div class="game-time-row">
+            <span class="game-time">${game.time}</span>
+          </div>
+          ${renderTeamRow(gi, 'away', game)}
+          ${renderTeamRow(gi, 'home', game)}
+        </div>`;
+    });
+  });
+  content.innerHTML = html;
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  onSearchInput();
+}
+
+// Track filter chips
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+// ========================================
+// INIT
+// ========================================
+renderGames();
+</script>
+
+</body>
+</html>
