@@ -1,0 +1,5 @@
+# macOS metadata
+.DS_Store
+
+# Plaintext source for the encrypted Chopped case study — never commit
+chopped/_content.html
